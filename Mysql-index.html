@@ -1,0 +1,420 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>MySQL索引 | Memorykk | never too late to learn</title>
+
+  
+  <meta name="author" content="Memorykk">
+  
+
+  
+  <meta name="description" content="computer,program,developer,java,linux">
+  
+
+  
+  <meta name="keywords" content="computer,study,log,tool,fragment,program,developer,java,linux">
+  
+
+  <meta id="viewport" name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+
+  <meta property="og:title" content="MySQL索引"/>
+
+  <meta property="og:site_name" content="Memorykk"/>
+
+  
+  <meta property="og:image" content="/images/favicon.ico"/>
+  
+
+  <link href="/images/favicon.ico" rel="icon">
+  <link rel="alternate" href="/atom.xml" title="Memorykk" type="application/atom+xml">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+  <meta name="baidu-site-verification" content="code-DBwLDCJwuQ" />
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+
+<body>
+<div class="blog">
+  <div class="content">
+
+    <header>
+  <div class="site-branding">
+    <h1 class="site-title">
+      <a href="/">Memorykk</a>
+    </h1>
+    <p class="site-description">never too late to learn</p>
+  </div>
+  <nav class="site-navigation">
+    <ul>
+      
+        <li><a href="/">主页</a></li>
+      
+        <li><a href="/categories">分类</a></li>
+      
+        <li><a href="/archives">归档</a></li>
+      
+        <li><a href="/about">关于</a></li>
+      
+        <li><a href="/atom.xml">订阅</a></li>
+      
+    </ul>
+  </nav>
+</header>
+
+    <main  class="site-main posts-loop">
+    <article>
+
+  
+    
+    <h3 class="article-title"><span>MySQL索引</span></h3>
+    
+  
+
+  <div class="article-top-meta">
+    <span class="posted-on">
+      <a href="/Mysql-index.html" rel="bookmark">
+        <time class="entry-date published" datetime="2021-08-26T13:23:12.000Z">
+          2021-08-26
+        </time>
+      </a>
+    </span>
+  </div>
+
+
+  
+
+  <div class="article-content">
+    <div class="entry">
+      
+        <p>Mysql索引+事务</p>
+<span id="more"></span>
+
+<p>索引是帮助MySQL高效获取数据的排好序的数据结构，将无序的数据编程有序的查询。</p>
+<ul>
+<li>二叉树：单链</li>
+<li>红黑树：二叉平衡树，提高一倍。旋转成本，树的高度可能会很高，效率很差</li>
+<li>Hash表：</li>
+<li>B-Tree：改进红黑树，使高度尽可能小，节点横向扩展，一个存储更多的节点 。</li>
+</ul>
+<p>索引数据分布在叶子、非叶子中，索引不重复，索引从左至右递增。</p>
+<p><img src="/images/Mysql_index/image-20210825202125656.png" alt="image-20210825202125656"></p>
+<ul>
+<li>B+Tree：叶子节点指针连接，非叶子节点不存储数据，叶子节点包含所有索引，非叶子节点包含一部分索引，冗余索引（只需要冗余主键），数据放在叶子节点。</li>
+</ul>
+<p>双向链表便于大于、小于的索引查找</p>
+<p><img src="/images/Mysql_index/image-20210825202004251.png" alt="image-20210825202004251"></p>
+<p>树的高度越小越好，一个节点上存储更多索引（16KB），所以从磁盘一次加载的数据多，二分查找速度快</p>
+<p>B+树非叶子节点不存储数据，也就能放更多的索引，存储量大，B树节点有数据就不行。所以决定树的高度：非叶子节点中能放的索引数量。</p>
+<p>三层即可存储2000w+索引，在mysql启动时将上层索引加载到内存中，索引取数据只需要大约一次IO。</p>
+<p><img src="/images/Mysql_index/image-20210825203138095.png" alt="image-20210825203138095"></p>
+<p>.frm 表结构</p>
+<p>.MYD 表数据</p>
+<p>.MYI 表索引</p>
+<p>myisam查询过程：条件是否是索引，是则遍历myiB+树，根据地址找到myd磁盘地址。</p>
+<p>.frm 表结构</p>
+<p>.ibd 数据+索引，表数据也是按照B+组织</p>
+<p>innodb推荐建立主键：自增主键：</p>
+<ul>
+<li>聚集索引：叶节点包含了完整的数据记录，数据和索引聚集在一起，innodb主键索引。</li>
+</ul>
+<p>innodb非主键索引（回表、二次）：叶子节点存储主键值：一致性和节省存储空间。</p>
+<ul>
+<li>非聚集索引：索引和数据分开存储。（myisam）效率不如聚集，回表：二次索引（拿到索引再去磁盘遍历索引）</li>
+</ul>
+<p><img src="/images/Mysql_index/image-20210825204526349.png" alt="image-20210825204526349"></p>
+<p>必须要建主键？Mysql会使用主键构建B+树，没有主键Mysql会找一个不重复的列来构建，找不到就生成一个隐藏列rowid来构建，所以节省空间。</p>
+<p>为什么不能用UUID？UUID非整型非自增，比较大小效率慢，所以推荐整型。B+范围查找只需两次，非自增只向后插，不用分页，分裂次数少，维护B+结构成本小，推荐自增。</p>
+<p>索引就是目录，用空间换时间，B+的节点就是16KB的页，查找就是遍历页上的有序数据，一个页上有多个节点，但是页越来越长，形成链表效率会降低，所以构建目录的目录，即树。</p>
+<p>mysql运行时间长之后，缓存加载到内存越来越大，</p>
+<ul>
+<li>Hash索引：</li>
+</ul>
+<p>一次计算。不支持范围查询，hash冲突问题</p>
+<ul>
+<li>联合索引：</li>
+</ul>
+<p>多个字段，按先后顺序，谁先排好序就以谁的排序为准，后面的忽略。</p>
+<p><img src="/images/Mysql_index/image-20210825211720812.png" alt="image-20210825211720812"></p>
+<p>建立联合索引需要重新构建B+树，所以会和主键索引构建的B+树大量冗余数据，资源浪费，所以可以使联合索引树叶子节点不存储数据，只存储主键，然后回表，是个折中的办法。</p>
+<p><img src="/images/Mysql_index/image-20210826090232766.png" alt="image-20210826090232766"></p>
+<p>主键索引：</p>
+<p><img src="/images/Mysql_index/image-20210826094000399.png" alt="image-20210826094000399"></p>
+<p>select * from t where b&gt;1;(bcd联合索引)</p>
+<p><strong>选择索引：</strong>利用联合索引可以找到数据，但是查找的是*全部数据，叶子节点只有bcd三列数据，所以需要7次回表查出全部数据，全表扫描走主键只需要四次，更快，所以实际执行的是全表扫描，非联合索引。</p>
+<ul>
+<li><p>如果是select b,c,d,a；那么也能走联合索引，因为想要的四个字段都在一棵树上，叶子是主键a</p>
+</li>
+<li><p>select b;联合索引的叶子能够找出满足要求的数据，就不用走全表扫描。</p>
+</li>
+<li><p>同样地，如果联合索引回表次数&lt;全表扫描加载页次数，也不用走全扫描。</p>
+</li>
+<li><p>select b from t;没有where条件也能走联合索引，主键索引和联合索引都能找到所需数据，并且如果二者的页数相等，但是因为联合索引叶子节点存储主键，主键索引叶子存储数据，所以联合索引的一页比主键索引的一页存储的数据更多，虽然不完整，只有bcd，但是查询我们只要b就够了，所以不走主键。</p>
+</li>
+<li><p>select * from t order by b,c,d;走bcd不用排序但需要回表八次，全表扫描需要四次，需要排序。因为只有8条数据，排序很快，所以走的是全表扫描。如果select b不需要回表，走的是联合索引。</p>
+</li>
+</ul>
+<p>最左前缀法则：查询从最左前列开始并且二不能跳过中间。也就是联合索引触发必须从包含第一个列的条件开始。</p>
+<p>原理：比如age=30，如果不考虑name是否有序而使用age索引的前提是前面的name相同，那么就应该理解为同一列的节点的age是有序的，但是不是有序的，需要全表扫描（从左向右逐个检查）。判断索引是否会用到的原则，当前列是否有序。</p>
+<p>Mysql中类型不匹配时，字符转数字，数字型字符会自动类型转成数字，非数字型字符会转成0，即：</p>
+<p>select ‘a’=0;  true</p>
+<p>select ‘b12’=0;  true</p>
+<p>select ‘1’=0; false </p>
+<p>隐式的类型转换可能会导致索引失效。</p>
+<p>Mysql5.8之前仅支持升序索引，5.7支持语法层面的降序，但是索引组织仍然是升序的。</p>
+<p><strong>索引类型对数据库的性能影响</strong></p>
+<p><img src="/images/Mysql_index/image-20210826161730787.png" alt="image-20210826161730787"></p>
+<p>普通可重复，唯一不可重复，唯一可以有null，可以有多个，主键不能有null，且只能有一个。全文索引like关键字。</p>
+<p><strong>聚簇 非聚簇</strong></p>
+<p><img src="/images/Mysql_index/image-20210826163500181.png"></p>
+<p><img src="/images/Mysql_index/image-20210826163536434.png" alt="image-20210826163536434"></p>
+<p>innodb仅叶子节点将索引数据放在一起。</p>
+<p>表中除了主键索引的其他索引都是辅助索引，其叶子节点存储地十主键，类非聚簇索引，但存储的不是行地址，而是主键，所以非聚簇索引都是辅助索引。</p>
+<p><strong>索引数据结构的优劣势</strong></p>
+<p><img src="/images/Mysql_index/image-20210826164046114.png" alt="image-20210826164046114"></p>
+<p><img src="/images/Mysql_index/image-20210826164125546.png" alt="image-20210826164125546"></p>
+<p><img src="/images/Mysql_index/image-20210826164153227.png" alt="image-20210826164153227"></p>
+<p><strong>索引的设计原则</strong></p>
+<p><img src="/images/Mysql_index/image-20210826164315221-1629967396390.png" alt="image-20210826164315221"></p>
+<ul>
+<li>适合索引的是where</li>
+<li>使用前缀段短索引</li>
+<li>不能在更新频繁、数据区分度小、重复度高、数据量小的列建索引</li>
+</ul>
+<p><strong>Mysql锁的类型</strong></p>
+<p><img src="/images/Mysql_index/image-20210826164836207.png" alt="image-20210826164836207"></p>
+<p><img src="/images/Mysql_index/image-20210826165201233.png" alt="image-20210826165201233"></p>
+<p><img src="/images/Mysql_index/image-20210826165417928.png" alt="image-20210826165417928"></p>
+<p><img src="/images/Mysql_index/image-20210826170133849.png" alt="image-20210826170133849"></p>
+<p>1 4 5 7，间隙锁锁住234，临建锁锁住1234.</p>
+<p>行锁页锁会出现死锁。</p>
+<p>意向锁提高了加锁效率。</p>
+<p>innodb默认采用行锁，myisam默认采用表锁。</p>
+<p><strong>Mysql执行计划</strong></p>
+<ul>
+<li><p>id：select的序号，顺序增长，越大优先级越高；</p>
+</li>
+<li><p>select_type：</p>
+<ul>
+<li>simple：简单查询，不包含子查询和union；</li>
+<li>primary：复杂查询中最外层的select；</li>
+<li>subquery：select中的子查询；</li>
+<li>derived：from中的子查询。</li>
+</ul>
+</li>
+<li><p>table：正在访问哪个表</p>
+<ul>
+<li>from有子查询时，drivenN，N代表id=N的查询</li>
+<li>有union时，union1,2，表示参与union的id</li>
+</ul>
+</li>
+<li><p>type：关联类型或访问类型，即MySQL决定<strong>如何查找表中的行</strong>，查找数据行记录的大概范围。<br>依次从最优到最差分别为：system &gt; const &gt; eq_ref &gt; ref &gt; range &gt; index &gt; ALL<br>一般来说，得保证查询达到range级别，最好达到ref  </p>
+<ul>
+<li>NULL：mysql能够在优化阶段分解查询语句，在执行阶段用不着再访问表或索引。例如：在索引列中选取最小值，可以单独查找索引来完成，不需要在执行时访问表  </li>
+<li>const：<strong>通过索引一次命中；</strong></li>
+<li>system：表中只有一行记录；</li>
+<li>eq_ref：primary key 或 unique key 索引的所有部分被连接使用 ，最多<strong>只会返回一条</strong>符合条件的记录。<strong>唯一性索引扫描</strong></li>
+</ul>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line">explain <span class="keyword">select</span> <span class="operator">*</span> <span class="keyword">from</span> film_actor <span class="keyword">left</span> <span class="keyword">join</span> film <span class="keyword">on</span> film_actor.film_id <span class="operator">=</span> film.id;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>ref：相比 eq_ref，<strong>非唯一性索引扫描</strong>，而是使用普通索引或者唯一性索引的部分前缀，索引要和某个值相比较，可能会找到多个符合条件的行。  <strong>和eq_ref都需要回表</strong></li>
+<li>range：<strong>范围扫描</strong>，通常出现在 in(), between ,&gt; ,&lt;, &gt;= 等操作中。使用一个索引来检索给定范围的行。  </li>
+<li>index：<strong>扫描全索引就能拿到结果</strong>，一般是扫描某个二级索引，这种扫描不会从索引树根节点开始快速查找，而是直接对二级索引的叶子节点遍历和扫描，速度还是比较慢的，这种查询一般为使用覆盖索引，二级索引一般比较小，所以这种通常比ALL快一些  </li>
+<li>ALL：即全表扫描，扫描你的聚簇索引的所有叶子节点。通常情况下这需要增加索引来进行优化了  </li>
+</ul>
+</li>
+<li><p>key：显示mysql<strong>实际采用哪个索引</strong>来优化对该表的访问。<br>如果没有使用索引，则该列是 NULL。如果想强制mysql使用或忽视possible_keys列中的索引，在查询中使用<br>force index、ignore index ；</p>
+</li>
+<li><p>possible_keys：显示查询<strong>可能使用哪些索引</strong>来查找。<br>explain 时可能出现 possible_keys 有列，而 key 显示 NULL 的情况，这种情况是因为表中数据不多，mysql认为索引对此查询帮助不大，选择了全表查询。<br>如果该列是NULL，则没有相关的索引。在这种情况下，可以通过检查 where 子句看是否可以创造一个适当的索引来提高查询性能，然后用 explain 查看效果  。</p>
+</li>
+<li><p>key_len：mysql在<strong>索引里使用的字节数</strong>，通过这个值可以算出具体使用了索引中的哪些列，特别是联合索引。  </p>
+<p>索引最大长度是768字节，当字符串过长时，mysql会做一个类似左前缀索引的处理，将前半部分的字符提取出来做索引  </p>
+</li>
+<li><p>ref：在key列记录的索引中，表查找值所<strong>用到的列或常量</strong>，常见的有：const（等值查询），字段名（例：film.id）  </p>
+</li>
+<li><p>rows：mysql估计要读取并检测的行数，越少越好，注意这个不是结果集里的行数  </p>
+</li>
+<li><p>filtered：读取rows行，返回x行，x/rows 返回百分比</p>
+</li>
+<li><p>Extra：额外信息</p>
+<ul>
+<li>Using index：使用覆盖索引 ，性能高</li>
+</ul>
+<p>覆盖索引定义：mysql执行计划explain结果里的key有使用索引，如果select后面查询的字段都可以从这个索引的树中获取，这种情况一般可以说是用到了覆盖索引，extra里一般都有using index；覆盖索引一般针对的是辅助索引，整个查询结果只通过辅助索引就能拿到结果，不需要通过辅助索引树找到主键，再通过主键去主键索引树里获取其它字段值。</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line">explain <span class="keyword">select</span> film_id <span class="keyword">from</span> film_actor <span class="keyword">where</span> film_id <span class="operator">=</span> <span class="number">1</span>;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>Using where：使用 where 语句来处理结果，并且查询的列未被索引覆盖  </li>
+</ul>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line">explain <span class="keyword">select</span> <span class="operator">*</span> <span class="keyword">from</span> actor <span class="keyword">where</span> name <span class="operator">=</span> <span class="string">&#x27;a&#x27;</span>;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>Using index condition：查询的列不完全被索引覆盖，where条件中是一个前导列的范围；</li>
+</ul>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line">explain <span class="keyword">select</span> <span class="operator">*</span> <span class="keyword">from</span> film_actor <span class="keyword">where</span> film_id <span class="operator">&gt;</span> <span class="number">1</span>;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>Using temporary：排序、分组时等，mysql需要创建一张临时表来处理查询。出现这种情况一般是要进行优化的，首先是想到用索引来优化  </li>
+</ul>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line">explain <span class="keyword">select</span> <span class="keyword">distinct</span> name <span class="keyword">from</span> film;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><p>Using filesort：将用外部排序而不是索引排序，数据较小时从内存排序，否则需要在磁盘完成排序。这种情况下一般也是要考虑使用索引来优化的  </p>
+</li>
+<li><p>Select tables optimized away：使用某些聚合函数（比如 max、min）来访问存在索引的某个字段是  </p>
+</li>
+</ul>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line">explain <span class="keyword">select</span> <span class="built_in">min</span>(id) <span class="keyword">from</span> film;</span><br></pre></td></tr></table></figure></li>
+</ul>
+<p><strong>事务的基本特性和隔离级别</strong></p>
+<p>原子性、一致性、隔离性、持久性。</p>
+<p><img src="/images/Mysql_index/image-20210826205502058.png" alt="image-20210826205502058"></p>
+<p>一致性：事务之前id唯一，不能操作之后不唯一了。</p>
+<p><img src="/images/Mysql_index/image-20210826205907242.png" alt="image-20210826205907242"></p>
+<p>readview只针对查询操作，如果在此期间其他事务插入了新数据，就会导致之幻读。配合间隙锁解决。</p>
+<p><img src="/images/Mysql_index/image-20210826210528829.png" alt="image-20210826210528829"></p>
+<p><strong>Mysql主从同步原理</strong></p>
+<p><img src="/images/Mysql_index/image-20210826211212487.png" alt="image-20210826211212487"></p>
+<p><img src="/images/Mysql_index/image-20210826211235973.png" alt="image-20210826211235973"></p>
+<p><strong>MyISAM和InnoDB的区别</strong></p>
+<p><img src="/images/Mysql_index/image-20210826211329868.png" alt="image-20210826211329868"></p>
+<p>MYISAM适合查询，InnoDB适合写。</p>
+<hr>
+<p>客户端 - server（连接器 - 查询缓存 - 分析器 - 优化器 - 执行器） - 存储引擎（查询结果，返回结果集） </p>
+<p>Buffer Pool 128MB：查找的结果从磁盘复制到BufferPool，先从pool查，修改先改pool，离散的页数组：</p>
+<ul>
+<li><p>free list：记录空闲的页，便于插入</p>
+</li>
+<li><p>flush list：记录脏页，便于后台线程寻找</p>
+</li>
+<li><p>lru list：pool占满时，最近最久未使用的页被淘汰，头部是新的，尾部是旧的</p>
+</li>
+</ul>
+<p>对于全表扫描，大量数据会将pool换掉。Innodb将lru分为热点区5/8，冷数据区3/8，优先淘汰冷数据区，两次访问到数据的间隔&gt;1s，表示一个正常的频率，转移冷数据-&gt;热数据，全表扫描时间隔小于1s，就不会发生冷替换热的情况。</p>
+<hr>
+<p>脏页刷新丢失：</p>
+<p>1、修改pool产生脏页</p>
+<p>2、生成逻辑redo log（mysql内存中脏页持久化到磁盘需要，挂掉之后重新执行redo恢复） -&gt; log buffer</p>
+<p>3、redo log 持久化（当事务提交时）</p>
+<p>4、bin log 持久化</p>
+<p>5、undo log </p>
+<p>6、修改成功</p>
+<p>redo(log file0,log file1)file满检查点：将log file持久化到磁盘。logfile太小持久化频繁，太大恢复启动慢。</p>
+<p><strong>持久化机制：</strong>不持久化、立即持久、立即刷新到OS缓存而不立即持久化</p>
+<p><img src="/images/Mysql_index/image-20210826145638599.png" alt="image-20210826145638599"></p>
+<p>执行事务生成bin log</p>
+<table>
+<thead>
+<tr>
+<th>redo</th>
+<th>bin log</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>innodb</td>
+<td>mysql级别</td>
+</tr>
+<tr>
+<td>物理的、记录一页的某个位置的数据修改，速度快</td>
+<td>逻辑的sql语句，慢。用于主从复制</td>
+</tr>
+</tbody></table>
+<p>undo log：反向日志，记录修改之前的数据，回滚使用，实现事物的隔离级别。</p>
+<p><strong>double write buffer</strong>（OS中）</p>
+<p>innodb数据页16KB，OS页4KB分四次写入。解决问题：如果中途挂了，就不清楚是写入了还是没写入，即没有原子性，所以出现双写缓存。</p>
+<p>innodb写入双写缓存即认为成功，并产生redo log，成功之后log失效</p>
+<p>刷新一次先写入双写缓存，再写入表空间两部完成。如果第一步挂了 ，这时候可以使用redo log恢复，如果第二部挂了，可以重新从双写缓存拿到完整的数据重新写。</p>
+<p><strong>Change Buffer</strong></p>
+<p>插入缓冲区：写操作更新数据页、索引页，数据页由日志优化，change优化索引页。</p>
+<p>储存在buffer pool（索引页+数据页）中，占25%。存储修改的信息（update语句），修改时数据页被更新，但索引页不更新，暂时存在change buffer中，等到下次查询走索引调用的时候将磁盘中的索引调到pool中，再和change中对应的update整合，拿到正确的索引页，即延迟更新机制，使update效率变高了。</p>
+<p><strong>可重复读</strong></p>
+<p>开启两个事务，a先读取，b修改此值，a再次读取，结果仍为之前的旧值。</p>
+<p>undo实现：每个事务通过链表readview记录和它同时存在的活跃的事务，以及它们的undo log，在第二次查询时，按照记录的undolog，判断生成的事务是否在readview里，若在则执行undolog，这样就可以还原之前的值，然后输出。</p>
+<p><img src="/images/Mysql_index/image-20210826155926540.png" alt="image-20210826155926540"></p>
+<p>可重复读在第一次读时生成readview，后面使用同一个readview；读已提交在别的事务提交之后发生更新，判断undo链发现不在readview里，就直接取最新值。也就是说，在别的事务提交之后，查找的数据还不是最新的，而是事务启动时候的，读取已提交却可以拿到最新数据，所以可重复读相对更严。</p>
+<p>隔离级别越来越严，越难读到最新值，效率也就越低。 </p>
+<p><img src="/images/Mysql_index/image-20210826161145756.png" alt="image-20210826161145756"></p>
+
+      
+    </div>
+
+  </div>
+
+  <div class="article-footer">
+    <div class="article-meta pull-left">
+
+    
+      
+
+    <span class="post-categories">
+      <i class="icon-categories"></i>
+        <a href="/categories/Study/">Study</a>
+    </span>
+    
+
+    
+    
+
+    <span class="post-tags">
+      <i class="icon-tags"></i>
+        <a href="/tags/MySQL/">MySQL</a>
+    </span>
+    
+
+    </div>
+
+    
+  </div>
+</article>
+
+  
+	<section id="comment" class="comment">
+		<div id="gitalk-container"></div>
+	</section>
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1.7.2/dist/gitalk.css">
+	<script src="https://cdn.jsdelivr.net/npm/gitalk@1.7.2/dist/gitalk.min.js"></script>
+	<script>
+		var gitalk = new Gitalk({
+			clientID: '43df1f730957f2695673',
+			clientSecret: '29fa4bdef022da54ce3ebc4ec844d1b5c418d42a',
+			repo: 'memorykkk.github.io',
+			owner: 'memorykkk',
+			admin: ['memorykkk'],
+			id: location.pathname,
+			distractionFreeMode: false,
+			createIssueManually: true,
+			proxy: 'https://cors-anywhere.azm.workers.dev/https://github.com/login/oauth/access_token',
+		})
+
+		gitalk.render('gitalk-container')
+	</script>
+
+
+
+
+
+
+
+    </main>
+
+    <footer class="site-footer">
+  <p class="site-info" style="color='#9e9e9e'">
+    Proudly powered by <a href="https://hexo.io/" target="_blank">Hexo</a> &
+    Theme by <a href="https://github.com/CodeDaraW/Hacker" target="_blank">Hacker</a>
+    </br>
+    
+    &copy; 2020-2021 Memorykk
+    
+	<a href="http://beian.miit.gov.cn" target="_blank">陕ICP备20005895号-1</a>
+  </p>
+</footer>
+    
+    
+  </div>
+</div>
+
+</body>
+</html>
