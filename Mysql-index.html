@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   
-  <title>MySQL索引 | Memorykk | never too late to learn</title>
+  <title>MySQL | Memorykk | never too late to learn</title>
 
   
   <meta name="author" content="Memorykk">
@@ -21,7 +21,7 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black">
 
-  <meta property="og:title" content="MySQL索引"/>
+  <meta property="og:title" content="MySQL"/>
 
   <meta property="og:site_name" content="Memorykk"/>
 
@@ -69,15 +69,15 @@
 
   
     
-    <h3 class="article-title"><span>MySQL索引</span></h3>
+    <h3 class="article-title"><span>MySQL</span></h3>
     
   
 
   <div class="article-top-meta">
     <span class="posted-on">
       <a href="/Mysql-index.html" rel="bookmark">
-        <time class="entry-date published" datetime="2021-08-26T13:23:12.000Z">
-          2021-08-26
+        <time class="entry-date published" datetime="2021-08-27T02:23:12.000Z">
+          2021-08-27
         </time>
       </a>
     </span>
@@ -164,6 +164,15 @@
 <p>select ‘1’=0; false </p>
 <p>隐式的类型转换可能会导致索引失效。</p>
 <p>Mysql5.8之前仅支持升序索引，5.7支持语法层面的降序，但是索引组织仍然是升序的。</p>
+<p><strong>B树和B+树的区别</strong></p>
+<p>B树每个节点都存储key和data，所有节点组成这棵树，并且叶子节点指针为null。</p>
+<p><img src="/images/Mysql_index/20170920132504569-1630027523648.png" alt="20170920132504569"></p>
+<p>B+树只有叶子节点存储data，叶子节点包含了这棵树的所有键值，叶子节点不存储指针。</p>
+<p><img src="/images/Mysql_index/20170920132523536.png" alt="20170920132523536"></p>
+<p>MySql索引数据结构对经典的B+Tree进行了优化。在原B+Tree的基础上，增加一个指向相邻叶子节点的链表指<br>针，就形成了带有顺序指针的B+Tree，提高区间访问的性能。  </p>
+<p><img src="/images/Mysql_index/image-20210827092732211.png" alt="image-20210827092732211"></p>
+<p>原因有很多，最主要的是这棵树矮胖，呵呵。一般来说，索引很大，往往以索引文件的形式存储的磁盘上，索引查找时产生磁盘I/O消耗，相对于内存存取，I/O存取的消耗要高几个数量级，所以评价一个数据结构作为索引的优劣最重要的指标就是在查找过程中磁盘I/O操作次数的时间复杂度。树高度越小，I/O次数越少。 </p>
+<p>那为什么是B+树而不是B树呢，因为它内节点不存储data，这样一个节点就可以存储更多的key。</p>
 <p><strong>索引类型对数据库的性能影响</strong></p>
 <p><img src="/images/Mysql_index/image-20210826161730787.png" alt="image-20210826161730787"></p>
 <p>普通可重复，唯一不可重复，唯一可以有null，可以有多个，主键不能有null，且只能有一个。全文索引like关键字。</p>
@@ -190,6 +199,7 @@
 <p><img src="/images/Mysql_index/image-20210826170133849.png" alt="image-20210826170133849"></p>
 <p>1 4 5 7，间隙锁锁住234，临建锁锁住1234.</p>
 <p>行锁页锁会出现死锁。</p>
+<p>临建锁next key = 记录锁record + 间隙锁gap，三者都属于行锁。</p>
 <p>意向锁提高了加锁效率。</p>
 <p>innodb默认采用行锁，myisam默认采用表锁。</p>
 <p><strong>Mysql执行计划</strong></p>
@@ -241,18 +251,18 @@
 </li>
 <li><p>Extra：额外信息</p>
 <ul>
-<li>Using index：使用覆盖索引 ，性能高</li>
+<li>Using index：使用<strong>覆盖</strong>索引 ，性能高</li>
 </ul>
 <p>覆盖索引定义：mysql执行计划explain结果里的key有使用索引，如果select后面查询的字段都可以从这个索引的树中获取，这种情况一般可以说是用到了覆盖索引，extra里一般都有using index；覆盖索引一般针对的是辅助索引，整个查询结果只通过辅助索引就能拿到结果，不需要通过辅助索引树找到主键，再通过主键去主键索引树里获取其它字段值。</p>
 <figure class="highlight sql"><table><tr><td class="code"><pre><span class="line">explain <span class="keyword">select</span> film_id <span class="keyword">from</span> film_actor <span class="keyword">where</span> film_id <span class="operator">=</span> <span class="number">1</span>;</span><br></pre></td></tr></table></figure>
 
 <ul>
-<li>Using where：使用 where 语句来处理结果，并且查询的列未被索引覆盖  </li>
+<li>Using where：使用 where 语句来处理结果，并且查询的列<strong>未被索引覆盖</strong>  </li>
 </ul>
 <figure class="highlight sql"><table><tr><td class="code"><pre><span class="line">explain <span class="keyword">select</span> <span class="operator">*</span> <span class="keyword">from</span> actor <span class="keyword">where</span> name <span class="operator">=</span> <span class="string">&#x27;a&#x27;</span>;</span><br></pre></td></tr></table></figure>
 
 <ul>
-<li>Using index condition：查询的列不完全被索引覆盖，where条件中是一个前导列的范围；</li>
+<li>Using index condition：查询的列<strong>不完全</strong>被索引覆盖，where条件中是一个前导列的范围；</li>
 </ul>
 <figure class="highlight sql"><table><tr><td class="code"><pre><span class="line">explain <span class="keyword">select</span> <span class="operator">*</span> <span class="keyword">from</span> film_actor <span class="keyword">where</span> film_id <span class="operator">&gt;</span> <span class="number">1</span>;</span><br></pre></td></tr></table></figure>
 
@@ -279,6 +289,7 @@
 <p><strong>Mysql主从同步原理</strong></p>
 <p><img src="/images/Mysql_index/image-20210826211212487.png" alt="image-20210826211212487"></p>
 <p><img src="/images/Mysql_index/image-20210826211235973.png" alt="image-20210826211235973"></p>
+<p><img src="/images/Mysql_index/image-20210827101814389.png" alt="image-20210827101814389"></p>
 <p><strong>MyISAM和InnoDB的区别</strong></p>
 <p><img src="/images/Mysql_index/image-20210826211329868.png" alt="image-20210826211329868"></p>
 <p>MYISAM适合查询，InnoDB适合写。</p>
@@ -337,6 +348,250 @@
 <p>可重复读在第一次读时生成readview，后面使用同一个readview；读已提交在别的事务提交之后发生更新，判断undo链发现不在readview里，就直接取最新值。也就是说，在别的事务提交之后，查找的数据还不是最新的，而是事务启动时候的，读取已提交却可以拿到最新数据，所以可重复读相对更严。</p>
 <p>隔离级别越来越严，越难读到最新值，效率也就越低。 </p>
 <p><img src="/images/Mysql_index/image-20210826161145756.png" alt="image-20210826161145756"></p>
+<p><strong>视图</strong></p>
+<p>视图（View）是一种虚拟存在的表。视图并不在数据库中实际存在，行和列数据来自定义视图的查询中使用的表，并且是在使用视图时动态生成的。通俗的讲，视图就是一条SELECT语句执行后返回的结果集。所以我们在创建视图的时候，主要的工作就落在创建这条SQL查询语句上。<br>视图相对于普通的表的优势主要包括以下几项。</p>
+<ul>
+<li>简单：使用视图的用户完全不需要关心后面对应的表的结构、关联条件和筛选条件，对用户来说已经是过滤好的复合条件的结果集。</li>
+<li>安全：使用视图的用户只能访问他们被允许查询的结果集，对表的权限管理并不能限制到某个行某个列，但是通过视图就可以简单的实现。</li>
+<li>数据独立：一旦视图的结构确定了，可以屏蔽表结构变化对用户的影响，源表增加列对视图没有影响；源表修改列名，则可以通过修改视图来解决，不会造成对访问者的影响。  </li>
+</ul>
+<p><strong>存储过程</strong></p>
+<p>存储过程和函数是 事先经过编译并存储在数据库中的一段 <strong>SQL 语句的集合</strong>，调用存储过程和函数可以简化应用开发人员的很多工作，减少数据在数据库和应用服务器之间的传输，对于提高数据处理的效率是有好处的。</p>
+<ul>
+<li><p>函数 ： 是一个有返回值的过程 ；</p>
+</li>
+<li><p>过程 ： 是一个没有返回值的函数 ；  </p>
+</li>
+</ul>
+<p><strong>触发器</strong></p>
+<p>触发器是与表有关的数据库对象，指在 insert/update/delete 之前或之后，触发并执行触发器中定义的SQL语句集合。触发器的这种特性可以协助应用在数据库端确保数据的完整性 , 日志记录 , 数据校验等操作 。  </p>
+<p><strong>MySQL体系结构</strong></p>
+<p><img src="/images/Mysql_index/image-20210827093733982.png" alt="image-20210827093733982"></p>
+<p>整个MySQL Server由以下组成<br>Connection Pool : 连接池组件<br>Management Services &amp; Utilities : 管理服务和工具组件<br>SQL Interface : SQL接口组件<br>Parser : 查询分析器组件<br>Optimizer : 优化器组件<br>Caches &amp; Buffers : 缓冲池组件<br>Pluggable Storage Engines : 存储引擎<br>File System : 文件系统  </p>
+<p>连接层、服务层、引擎层、存储层。</p>
+<p>MySQL提供了插件式的存储引擎架构，存储引擎是基于表的，而不是基于库的。</p>
+<table>
+<thead>
+<tr>
+<th>特点</th>
+<th>InnoDB</th>
+<th>MyISAM</th>
+<th>MEMORY</th>
+<th>MERGE</th>
+<th>NDB</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>存储限制</td>
+<td>64TB</td>
+<td>有</td>
+<td>有</td>
+<td>没有</td>
+<td>有</td>
+</tr>
+<tr>
+<td>事务安全</td>
+<td>==支持==</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>锁机制</td>
+<td>==行锁(适合高并发)==</td>
+<td>==表锁==</td>
+<td>表锁</td>
+<td>表锁</td>
+<td>行锁</td>
+</tr>
+<tr>
+<td>B树索引</td>
+<td>支持</td>
+<td>支持</td>
+<td>支持</td>
+<td>支持</td>
+<td>支持</td>
+</tr>
+<tr>
+<td>哈希索引</td>
+<td></td>
+<td></td>
+<td>支持</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>全文索引</td>
+<td>支持(5.6版本之后)</td>
+<td>支持</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>集群索引</td>
+<td>支持</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>数据索引</td>
+<td>支持</td>
+<td></td>
+<td>支持</td>
+<td></td>
+<td>支持</td>
+</tr>
+<tr>
+<td>索引缓存</td>
+<td>支持</td>
+<td>支持</td>
+<td>支持</td>
+<td>支持</td>
+<td>支持</td>
+</tr>
+<tr>
+<td>数据可压缩</td>
+<td></td>
+<td>支持</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>空间使用</td>
+<td>高</td>
+<td>低</td>
+<td>N/A</td>
+<td>低</td>
+<td>低</td>
+</tr>
+<tr>
+<td>内存使用</td>
+<td>高</td>
+<td>低</td>
+<td>中等</td>
+<td>低</td>
+<td>高</td>
+</tr>
+<tr>
+<td>批量插入速度</td>
+<td>低</td>
+<td>高</td>
+<td>高</td>
+<td>高</td>
+<td>高</td>
+</tr>
+<tr>
+<td>支持外键</td>
+<td>==支持==</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</tbody></table>
+<p><strong>外键</strong></p>
+<ul>
+<li><p>MySQL支持外键的存储引擎只有InnoDB ， 在创建外键的时候， 要求父表必须有对应的索引 ， 子表在创建外键的时候， 也会自动的创建对应的索引。</p>
+</li>
+<li><p>MyISAM 不支持事务、也不支持外键，其优势是访问的速度快，对事务的完整性没有要求或者以SELECT、INSERT为主的应用基本上都可以使用这个引擎来创建表 。</p>
+</li>
+</ul>
+<p><strong>存储方式</strong>    </p>
+<ul>
+<li>InnoDB 存储表和索引有以下两种方式 ： </li>
+</ul>
+<p>①. 使用共享表空间存储， 这种方式创建的表的表结构保存在.frm文件中， 数据和索引保存在 innodb_data_home_dir 和 innodb_data_file_path定义的表空间中，可以是多个文件。</p>
+<p>MyISAM 不支持事务、也不支持外键，其优势是访问的速度快，对事务的完整性没有要求或者以SELECT、INSERT为主的应用基本上都可以使用这个引擎来创建表 。</p>
+<p>②. 使用多表空间存储， 这种方式创建的表的表结构仍然存在 .frm 文件中，但是每个表的数据和索引单独保存在 .ibd 中。</p>
+<p>MyISAM 不支持事务、也不支持外键，其优势是访问的速度快，对事务的完整性没有要求或者以SELECT、INSERT为主的应用基本上都可以使用这个引擎来创建表 。</p>
+<ul>
+<li><p>每个MyISAM在磁盘上存储成3个文件，其文件名都和表名相同，但拓展名分别是 ： </p>
+<p>.frm (存储表定义)；</p>
+<p>.MYD(MYData , 存储数据)；</p>
+<p>.MYI(MYIndex , 存储索引)；</p>
+</li>
+</ul>
+<p><strong>选择</strong></p>
+<ul>
+<li>InnoDB : 是Mysql的默认存储引擎，用于事务处理应用程序，支持外键。如果应用对事务的完整性有比较高的要求，在并发条件下要求数据的一致性，数据操作除了插入和查询意外，还包含很多的更新、删除操作，那么InnoDB存储引擎是比较合适的选择。InnoDB存储引擎除了有效的降低由于删除和更新导致的锁定， 还可以确保事务的完整提交和回滚，对于类似于计费系统或者财务系统等对数据准确性要求比较高的系统，InnoDB是最合适的选择。</li>
+<li>MyISAM ： 如果应用是以读操作和插入操作为主，只有很少的更新和删除操作，并且对事务的完整性、并发性要求不是很高，那么选择这个存储引擎是非常合适的。</li>
+</ul>
+<p><strong>避免索引失效</strong></p>
+<p>1).  全值匹配 ，对索引中所有列都指定具体值。</p>
+<p>改情况下，索引生效，执行效率高。</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line">explain <span class="keyword">select</span> <span class="operator">*</span> <span class="keyword">from</span> tb_seller <span class="keyword">where</span> name<span class="operator">=</span><span class="string">&#x27;小米科技&#x27;</span> <span class="keyword">and</span> status<span class="operator">=</span><span class="string">&#x27;1&#x27;</span> <span class="keyword">and</span> address<span class="operator">=</span><span class="string">&#x27;北京市&#x27;</span>\G;</span><br></pre></td></tr></table></figure>
+
+<p>2). 最左前缀法则</p>
+<p>如果索引了多列，要遵守最左前缀法则。指的是查询从索引的最左前列开始，并且不跳过索引中的列。</p>
+<p>匹配最左前缀法则，走索引：</p>
+<p>违法最左前缀法则 ， 索引失效：</p>
+<p>如果符合最左法则，但是出现跳跃某一列，只有最左列索引生效： </p>
+<p>3). 范围查询右边的列，不能使用索引 。 </p>
+<p><img src="/images/Mysql_index/image-20210827095442175.png" alt="image-20210827095442175"></p>
+<p>根据前面的两个字段name ， status 查询是走索引的， 但是最后一个条件address 没有用到索引。</p>
+<p>4). 不要在索引列上进行运算操作， 索引将失效。 </p>
+<p>5). 字符串不加单引号，造成索引失效。 </p>
+<p><img src="/images/Mysql_index/image-20210827095508302.png" alt="image-20210827095508302"></p>
+<p>由于，在查询是，没有对字符串加单引号，MySQL的查询优化器，会自动的进行类型转换，造成索引失效。</p>
+<p>6). 尽量使用覆盖索引，避免select *</p>
+<p>尽量使用覆盖索引（只访问索引的查询（索引列完全包含查询列）），减少select * 。 </p>
+<p>如果查询列，超出索引列，也会降低性能。 </p>
+<p>7). 用or分割开的条件， 如果or前的条件中的列有索引，而后面的列中没有索引，那么涉及的索引都不会被用到。</p>
+<p>示例，name字段是索引列 ， 而createtime不是索引列，中间是or进行连接是不走索引的 ： </p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line">explain <span class="keyword">select</span> <span class="operator">*</span> <span class="keyword">from</span> tb_seller <span class="keyword">where</span> name<span class="operator">=</span><span class="string">&#x27;黑马程序员&#x27;</span> <span class="keyword">or</span> createtime <span class="operator">=</span> <span class="string">&#x27;2088-01-01 12:00:00&#x27;</span>\G;	</span><br></pre></td></tr></table></figure>
+
+<p><img src="/images/Mysql_index/image-20210827095641389.png" alt="image-20210827095641389"></p>
+<p>8).  以%开头的Like模糊查询，索引失效。</p>
+<p>解决：不使用select *，使用覆盖索引select</p>
+<p>9). 如果MySQL评估使用索引比全表更慢，则不使用索引。</p>
+<p>10). is  NULL ， is NOT NULL  <font color='red'>有时</font>索引失效。  </p>
+<p>11). in 走索引， not in 索引失效。</p>
+<p>12). 单列索引和复合索引。</p>
+<p>尽量使用复合索引，而少使用单列索引 。</p>
+<p><strong>SQL优化</strong></p>
+<ul>
+<li><p>大量插入</p>
+<ul>
+<li>按照主键插入</li>
+<li>关闭唯一校验</li>
+</ul>
+<p>导入数据前执行 SET UNIQUE_CHECKS=0，关闭唯一性校验，在导入结束后执行SET UNIQUE_CHECKS=1， </p>
+<ul>
+<li>手动提交事务  </li>
+</ul>
+<p>导入前执行 SET AUTOCOMMIT=0，关闭自动提交，导入结束后再执行 SET AUTOCOMMIT=1，打开自动提交</p>
+</li>
+<li><p>insert语句</p>
+<ul>
+<li>尽量使用一条语句包含多个值插入</li>
+<li>开一个事务插入</li>
+<li>有序插入</li>
+</ul>
+</li>
+<li><p>分页</p>
+<p>一般分页查询时，通过创建覆盖索引能够比较好地提高性能。一个常见又非常头疼的问题就是 limit 2000000,10  ，此时需要MySQL排序前2000010 记录，仅仅返回2000000 - 2000010 的记录，其他记录丢弃，查询排序的代价非常大 。</p>
+<ul>
+<li><p>先查主键，在根据主键查全部记录</p>
+<p><img src="/images/Mysql_index/image-20210827100841455.png" alt="image-20210827100841455"></p>
+</li>
+<li><p>适用于主键自增的表，可以把Limit 查询转换成某个位置的查询 。  </p>
+<p><img src="/images/Mysql_index/image-20210827100919667.png" alt="image-20210827100919667"></p>
+</li>
+</ul>
+</li>
+<li><p>使用SQL提示</p>
+<ul>
+<li>USE INDEX：提供希望MySQL去参考的索引列表，就可以让MySQL不再考虑其他可用的索引。</li>
+<li>IGNORE INDEX：忽略一个或者多个索引</li>
+<li>FORCE INDEX：强制MySQL使用一个特定的索引</li>
+</ul>
+</li>
+</ul>
 
       
     </div>
