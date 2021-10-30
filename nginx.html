@@ -1,0 +1,253 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>Nginx | Memorykk | never too late to learn</title>
+
+  
+  <meta name="author" content="Memorykk">
+  
+
+  
+  <meta name="description" content="computer,program,developer,java,linux">
+  
+
+  
+  <meta name="keywords" content="computer,study,log,tool,fragment,program,developer,java,linux">
+  
+
+  <meta id="viewport" name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+
+  <meta property="og:title" content="Nginx"/>
+
+  <meta property="og:site_name" content="Memorykk"/>
+
+  
+  <meta property="og:image" content="/images/favicon.ico"/>
+  
+
+  <link href="/images/favicon.ico" rel="icon">
+  <link rel="alternate" href="/atom.xml" title="Memorykk" type="application/atom+xml">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+  <meta name="baidu-site-verification" content="code-DBwLDCJwuQ" />
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+
+<body>
+<div class="blog">
+  <div class="content">
+
+    <header>
+  <div class="site-branding">
+    <h1 class="site-title">
+      <a href="/">Memorykk</a>
+    </h1>
+    <p class="site-description">never too late to learn</p>
+  </div>
+  <nav class="site-navigation">
+    <ul>
+      
+        <li><a href="/">主页</a></li>
+      
+        <li><a href="/categories">分类</a></li>
+      
+        <li><a href="/archives">归档</a></li>
+      
+        <li><a href="/about">关于</a></li>
+      
+        <li><a href="/atom.xml">订阅</a></li>
+      
+    </ul>
+  </nav>
+</header>
+
+    <main  class="site-main posts-loop">
+    <article>
+
+  
+    
+    <h3 class="article-title"><span>Nginx</span></h3>
+    
+  
+
+  <div class="article-top-meta">
+    <span class="posted-on">
+      <a href="/nginx.html" rel="bookmark">
+        <time class="entry-date published" datetime="2021-10-30T02:49:13.000Z">
+          2021-10-30
+        </time>
+      </a>
+    </span>
+  </div>
+
+
+  
+
+  <div class="article-content">
+    <div class="entry">
+      
+        <p>Nginx 是一个高性能的 HTTP 和反向代理服务器</p>
+<span id="more"></span>
+<h2 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h2><p>Nginx (“engine x”) 是一个高性能的 HTTP 和反向代理服务器,特点是占有内存少，并发能力强，事实上 nginx 的并发能力确实在同类型的网页服务器中表现较好，</p>
+<p>Nginx 可以作为静态页面的 web 服务器，同时还支持 CGI 协议的动态语言，比如 perl、 php等。但是不支持 java。 Java 程序只能通过与 tomcat 配合完成。 Nginx 专为性能优化而开发，性能是其最重要的考量,实现上非常注重效率 ，能经受高负载的考验,有报告表明能支持高达 50,000 个并发连接数。</p>
+<ul>
+<li>正向代理</li>
+</ul>
+<p>Nginx 不仅可以做反向代理，实现负载均衡。还能用作正向代理来进行上网等功能。<br>正向代理：如果把局域网外的 Internet 想象成一个巨大的资源库，则局域网中的客户端要访问 Internet，则需要通过代理服务器来访问，这种代理服务就称为正向代理。</p>
+<ul>
+<li>反向代理</li>
+</ul>
+<p>反向代理，其实客户端对代理是无感知的，因为客户端不需要任何配置就可以访问，我们只需要将请求发送到反向代理服务器，由反向代理服务器去选择目标服务器获取数据后，在返回给客户端，此时反向代理服务器和目标服务器对外就是一个服务器，暴露的是代理服务器<br>地址，隐藏了真实服务器 IP 地址。</p>
+<ul>
+<li>负载均衡</li>
+</ul>
+<p>客户端发送多个请求到服务器，服务器处理请求，有一些可能要与数据库进行交互，服务器处理完毕后，再将结果返回给客户端。<br>这种架构模式对于早期的系统相对单一，并发请求相对较少的情况下是比较适合的，成本也低。但是随着信息数量的不断增长，访问量和数据量的飞速增长，以及系统业务的复杂度增加，这种架构会造成服务器相应客户端的请求日益缓慢，并发量特别大的时候，还容易造成服务器直接崩溃。很明显这是由于服务器性能的瓶颈造成的问题，那么如何解决这种情况呢？<br>我们首先想到的可能是升级服务器的配置，比如提高 CPU 执行频率，加大内存等提高机器的物理性能来解决此问题，但是我们知道摩尔定律的日益失效，硬件的性能提升已经不能满足日益提升的需求了。最明显的一个例子，天猫双十一当天，某个热销商品的瞬时访问量<br>是极其庞大的，那么类似上面的系统架构，将机器都增加到现有的顶级物理配置，都是不能够满足需求的。那么怎么办呢？<br>上面的分析我们去掉了增加服务器物理配置来解决问题的办法，也就是说纵向解决问题的办法行不通了，那么横向增加服务器的数量呢？这时候集群的概念产生了，单个服务器解决不了，我们增加服务器的数量，然后将请求分发到各个服务器上，将原先请求集中到单个<br>服务器上的情况改为将请求分发到多个服务器上，将负载分发到不同的服务器，也就是我们所说的负载均衡</p>
+<ul>
+<li>动静分离</li>
+</ul>
+<p>为了加快网站的解析速度，可以把动态页面和静态页面由不同的服务器来解析，加快解析速<br>度。降低原来单个服务器的压力。</p>
+<h2 id="负载均衡"><a href="#负载均衡" class="headerlink" title="负载均衡"></a>负载均衡</h2><ul>
+<li>轮询（默认）<br>每个请求<strong>按时间顺序</strong>逐一分配到不同的后端服务器，如果后端服务器 down 掉，能自动剔除。</li>
+<li>weight<br>weight 代表权,重默认为 1,权重越高被分配的客户端越多指定轮询几率， weight 和访问比率成正比，用于后端服务器性能不均的情况。</li>
+<li> least_conn</li>
+</ul>
+<p>  此策略是指每次将请求分发到当前连接数最少的服务器上，试图转发给相对空闲的服务器以实现负载平衡；</p>
+<ul>
+<li><p>ip_hash<br>每个请求按访问 ip 的 hash 结果分配，这样每个访客固定访问一个后端服务器，可以解决 session 的问题。从本质上说，ip hash算法是一种变相的轮询算法，如果两个ip的初始hash值恰好相同，那么来自这两个ip的请求将永远落在同一台服务器上，这为均衡性埋下了较深隐患。</p>
+</li>
+<li><p>url hash</p>
+<p>按访问url的hash结果来分配请求，使每个url定向到同一个后端服务器，后端服务器为缓存时比较有效。 </p>
+</li>
+<li><p>fair（第三方）<br>根据后端服务器的响应时间判断负载情况，从中选出负载最轻的机器进行分流。</p>
+</li>
+</ul>
+<h2 id="动静分离"><a href="#动静分离" class="headerlink" title="动静分离"></a>动静分离</h2><img src="/images/Nginx/image-20211030175322817.png" alt="image-20211030175322817" style="zoom: 67%;" />
+
+<p>Nginx 动静分离简单来说就是把<strong>动态跟静态请求分开</strong>，不能理解成只是单纯的把动态页面和静态页面物理分离。严格意义上说应该是动态请求跟静态请求分开，可以理解成使用 Nginx处理静态页面， Tomcat 处理动态页面。</p>
+<p>实现方案：</p>
+<p>一种是纯粹把静态文件独立成单独的域名，放在独立的服务器上，也是目前主流推崇的方案；</p>
+<p>另外一种方法就是动态跟静态文件混合在一起发布，通过 nginx 来分开。通过 location 指定不同的后缀名实现不同的请求转发。通过 expires 参数设置，可以使浏览器缓存过期时间，减少与服务器之前的请求和流量。</p>
+<h2 id="工作原理"><a href="#工作原理" class="headerlink" title="工作原理"></a>工作原理</h2><p>Nginx本身做的工作实际很少，当它接到一个HTTP请求时，它仅仅是通过查找配置文件将此次请求映射到一个location block，而此location中所配置的各个指令则会启动不同的模块去完成工作，因此模块可以看做Nginx真正的劳动工作者。通常一个location中的指令会涉及一个handler模块和多个filter模块（当然，多个location可以复用同一个模块）。handler模块负责处理请求，完成响应内容的生成，而filter模块对响应内容进行处理。</p>
+<p>模块：</p>
+<ul>
+<li>Handlers（处理器模块）。此类模块直接处理请求，并进行输出内容和修改headers信息等操作。Handlers处理器模块一般只能有一个。</li>
+<li>Filters （过滤器模块）。此类模块主要对其他处理器模块输出的内容进行修改操作，最后由Nginx输出。</li>
+<li>Proxies （代理类模块）。此类模块是Nginx的HTTP Upstream之类的模块，这些模块主要与后端一些服务比如FastCGI等进行交互，实现服务代理和负载均衡等功能。</li>
+</ul>
+<p> <img src="https://images2017.cnblogs.com/blog/1183448/201802/1183448-20180210145015185-1393050434.png" alt="img"></p>
+<h2 id="进程模型"><a href="#进程模型" class="headerlink" title="进程模型"></a><strong>进程模型</strong></h2><p>Nginx默认采用<strong>多进程</strong>工作方式。</p>
+<p>Nginx启动后，会运行一个master进程和多个worker进程。其中master充当整个进程组与用户的交互接口，同时对进程进行监护，管理worker进程来实现重启服务、平滑升级、更换日志文件、配置文件实时生效等功能。worker用来处理基本的网络事件，worker之间是平等的，他们共同竞争来处理来自客户端的请求。</p>
+<p><img src="https://images2017.cnblogs.com/blog/1183448/201802/1183448-20180210145226654-1347579045.png" alt="img"></p>
+<h3 id="master：管理worker"><a href="#master：管理worker" class="headerlink" title="master：管理worker"></a>master：管理worker</h3><p>  master进程主要用来管理worker进程，具体包括如下4个主要功能：<br>        （1）接收来自外界的信号。<br>        （2）向各worker进程发送信号。<br>        （3）监控woker进程的运行状态。<br>        （4）当woker进程退出后（异常情况下），会自动重新启动新的woker进程。</p>
+<h3 id="worker：处理请求"><a href="#worker：处理请求" class="headerlink" title="worker：处理请求"></a>worker：处理请求</h3><p>多个worker进程之间是对等的，他们同等竞争来自客户端的请求，各进程互相之间是独立的。一个请求，只可能在一个worker进程中处理，一个worker进程，不可能处理其它进程的请求。<strong>worker进程的个数是可以设置的，一般我们会设置与机器cpu核数一致</strong>，这里面的原因与nginx的进程模型以及事件处理模型是分不开的。</p>
+<p> Nginx采用<strong>异步非阻塞</strong>的方式来处理网络事件：</p>
+<ul>
+<li>接收请求：</li>
+</ul>
+<p>在创建master进程时，先建立需要监听的socket（listenfd），然后从master进程中fork()出多个worker进程，如此一来每个worker进程都可以监听用户请求的socket。一般来说，当一个连接进来后，所有在Worker都会收到通知，但是只有一个进程可以接受这个连接请求，其它的都失败，这是所谓的<strong>惊群现象</strong>。nginx提供了一个accept_mutex（<strong>互斥锁</strong>），有了这把锁之后，同一时刻，就只会有一个进程在accpet连接，这样就不会有惊群问题了。</p>
+<ul>
+<li>处理请求</li>
+</ul>
+<p>当一个worker进程在accept这个连接之后，就开始读取请求，解析请求，处理请求，产生数据后，再返回给客户端，最后才断开连接，这样一个完整的请求就是这样的了。</p>
+<p>我们可以看到，一个请求，完全由worker进程来处理，而且只在一个worker进程中处理。worker进程之间是平等的，每个进程，处理请求的机会也是一样的。</p>
+<h2 id="性能高的原因"><a href="#性能高的原因" class="headerlink" title="性能高的原因"></a>性能高的原因</h2><p>nginx是以多进程的方式来工作的，当然nginx也是支持多线程的方式的，只是我们主流的方式还是多进程的方式，也是nginx的默认方式。</p>
+<ul>
+<li>多进程模型</li>
+<li>异步非阻塞</li>
+</ul>
+<h3 id="多进程模型-VS-多线程模型"><a href="#多进程模型-VS-多线程模型" class="headerlink" title="多进程模型 VS 多线程模型"></a><strong>多进程模型 VS 多线程模型</strong></h3><p>首先，对于每个worker进程来说，独立的进程，不需要加锁，所以省掉了锁带来的开销；</p>
+<p>其次，采用独立的进程，可以让互相之间不会影响，一个进程退出后，其它进程还在工作，服务不会中断，master进程则很快启动新的worker进程。</p>
+<p>apache的常用工作方式（apache也有异步非阻塞版本，但因其与自带某些模块冲突，所以不常用），每个请求会独占一个工作线程，当并发数上到几千时，就同时有几千的线程在处理请求了。这对操作系统来说，是个不小的挑战，线程带来的内存占用非常大，线程的上下文切换带来的cpu开销很大，自然性能就上不去了，而这些开销完全是没有意义的。</p>
+<h3 id="同步阻塞-VS-异步非阻塞"><a href="#同步阻塞-VS-异步非阻塞" class="headerlink" title="同步阻塞 VS 异步非阻塞"></a><strong>同步阻塞 VS 异步非阻塞</strong></h3><p>同步阻塞的：处理请求时遇到读写事件，而当读写事件没有准备好时，那就只能等了，等事件准备好了，你再继续吧。cpu空闲下来没人用，cpu利用率自然上不去了，更别谈高并发了。</p>
+<p>非阻塞就是，事件虽没有准备好，但不会让你一直在等待，马上返回ErrorAgain，先去处理别的请求，但是需要不时地过来检查一下事件的状态，这种开销也是不小的。</p>
+<p>所以有了异步非阻塞的事件处理机制，具体到系统调用就是像select/poll/epoll/kqueue这样的系统调用。<strong>同时监控多个事件，调用他们是阻塞的，但可以设置超时时间，在超时时间之内准备好就返回。</strong>epoll为例，当事件没准备好时，放到epoll里面，事件准备好了，我们就去读写，当读写返回ErrorAgain时，我们将它再次加入到epoll里面。这样，只要有事件准备好了，我们就去处理它，只有当所有事件都没准备好时，才在epoll里面等着。</p>
+<p>这样，高并发下，<strong>线程虽然只有一个，但是一直在循环切换、处理请求而不停止，切换是没有任何代价</strong>，理解为循环处理多个准备好的事件，事实上就是这样的。与多线程相比，这种事件处理方式不需要创建线程，每个请求占用的内存也很少，没有上下文切换。并发数再多也不会导致无谓的资源浪费（上下文切换）。<strong>更多的并发数，只是会占用更多的内存而已。</strong></p>
+<p><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s?__biz=MjM5NTg2NTU0Ng==&mid=407889757&idx=3&sn=cfa8a70a5fd2a674a91076f67808273c&scene=23&srcid=0401aeJQEraSG6uvLj69Hfve#rd">参考文章</a></p>
+<h3 id="worker-数量"><a href="#worker-数量" class="headerlink" title="worker 数量"></a><strong>worker 数量</strong></h3><p>推荐设置<strong>worker的个数 == cpu的核数</strong>，在这里就很容易理解了，更多的worker数，只会导致进程来竞争cpu资源了，从而带来不必要的上下文切换。而且，nginx为了更好的利用多核特性，提供了cpu亲缘性的绑定选项，我们可以将某<strong>一个进程绑定在某一个核</strong>上，这样就不会因为进程的切换带来cache的失效。</p>
+<p>对于一个基本的web服务器来说，事件通常有三种类型，网络事件、信号、定时器。从上面的讲解中知道，网络事件通过异步非阻塞可以很好的解决掉。如何处理信号与定时器？</p>
+<h3 id="信号处理"><a href="#信号处理" class="headerlink" title="信号处理"></a>信号处理</h3><p>首先，信号的处理。对nginx来说，有一些特定的信号，代表着特定的意义。信号会中断掉程序当前的运行，在改变状态后，继续执行。如果是系统调用，则可能会导致系统调用的失败，需要重入。关于信号的处理，大家可以学习一些专业书籍，这里不多说。对于nginx来说，如果nginx正在等待事件（epoll_wait时），如果程序收到信号，在信号处理函数处理完后，epoll_wait会返回错误，然后程序可再次进入epoll_wait调用。</p>
+<h3 id="定时器"><a href="#定时器" class="headerlink" title="定时器"></a>定时器</h3><p>由于epoll_wait等函数在调用的时候是可以设置一个超时时间的，所以nginx借助这个超时时间来实现定时器。nginx里面的定时器事件是放在一颗维护定时器的红黑树里面，每次在进入epoll_wait前，<strong>先从该红黑树里面拿到所有定时器事件的最小时间</strong>，在计算出epoll_wait的超时时间后进入epoll_wait。所以当没有事件产生，也没有中断信号时，epoll_wait会超时，也就是说定时器事件到了。这时nginx会检查所有的超时事件，将他们的状态设置为超时，然后再去处理网络事件。</p>
+
+      
+    </div>
+
+  </div>
+
+  <div class="article-footer">
+    <div class="article-meta pull-left">
+
+    
+      
+
+    <span class="post-categories">
+      <i class="icon-categories"></i>
+        <a href="/categories/Study/">Study</a>
+    </span>
+    
+
+    
+    
+
+    <span class="post-tags">
+      <i class="icon-tags"></i>
+        <a href="/tags/Nginx/">Nginx</a>
+    </span>
+    
+
+    </div>
+
+    
+  </div>
+</article>
+
+  
+	<section id="comment" class="comment">
+		<div id="gitalk-container"></div>
+	</section>
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1.7.2/dist/gitalk.css">
+	<script src="https://cdn.jsdelivr.net/npm/gitalk@1.7.2/dist/gitalk.min.js"></script>
+	<script>
+		var gitalk = new Gitalk({
+			clientID: '43df1f730957f2695673',
+			clientSecret: '29fa4bdef022da54ce3ebc4ec844d1b5c418d42a',
+			repo: 'memorykkk.github.io',
+			owner: 'memorykkk',
+			admin: ['memorykkk'],
+			id: location.pathname,
+			distractionFreeMode: false,
+			createIssueManually: true,
+			proxy: 'https://cors-anywhere.azm.workers.dev/https://github.com/login/oauth/access_token',
+		})
+
+		gitalk.render('gitalk-container')
+	</script>
+
+
+
+
+
+
+
+    </main>
+
+    <footer class="site-footer">
+  <p class="site-info" style="color='#9e9e9e'">
+    Proudly powered by <a href="https://hexo.io/" target="_blank">Hexo</a> &
+    Theme by <a href="https://github.com/CodeDaraW/Hacker" target="_blank">Hacker</a>
+    </br>
+    
+    &copy; 2020-2021 Memorykk
+    
+	<a href="http://beian.miit.gov.cn" target="_blank">陕ICP备20005895号-1</a>
+  </p>
+</footer>
+    
+    
+  </div>
+</div>
+
+</body>
+</html>

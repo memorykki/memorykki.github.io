@@ -70,6 +70,773 @@
 
   
     
+    <h3 class="article-title"><a href="/Spring.html"><span>Spring</span></a></h3>
+    
+  
+
+  <div class="article-top-meta">
+    <span class="posted-on">
+      <a href="/Spring.html" rel="bookmark">
+        <time class="entry-date published" datetime="2021-08-10T02:49:13.000Z">
+          2021-08-10
+        </time>
+      </a>
+    </span>
+  </div>
+
+
+  
+
+  <div class="article-content">
+    <div class="entry">
+      
+        <span id="more"></span>
+<h2 id="spring"><a href="#spring" class="headerlink" title="spring"></a>spring</h2><p>基于POJO的轻量级和最小侵入性编程；<br>通过依赖注入和面向接口实现松耦合；<br>基于切面和惯例进行声明式编程；<br>通过切面和模板减少样板式代码。</p>
+<h2 id="优缺点"><a href="#优缺点" class="headerlink" title="优缺点"></a>优缺点</h2><ul>
+<li>方便解耦，简化开发</li>
+</ul>
+<p>Spring就是一个大工厂，可以将所有对象的创建和依赖关系的维护，交给Spring管理。</p>
+<ul>
+<li>AOP编程的支持</li>
+</ul>
+<p>Spring提供面向切面编程，可以方便的实现对程序进行权限拦截、运行监控等功能。</p>
+<ul>
+<li>声明式事务的支持</li>
+</ul>
+<p>只需要通过配置就可以完成对事务的管理，而无需手动编程。</p>
+<ul>
+<li>方便程序的测试</li>
+</ul>
+<p>Spring对Junit4支持，可以通过注解方便的测试Spring程序。</p>
+<ul>
+<li>方便集成各种优秀框架</li>
+</ul>
+<p>Spring不排斥各种优秀的开源框架，其内部提供了对各种优秀框架的直接支持（如：Struts、Hibernate、MyBatis等）。</p>
+<ul>
+<li>降低JavaEE API的使用难度</li>
+</ul>
+<p>Spring对JavaEE开发中非常难用的一些API（JDBC、JavaMail、远程调用等），都提供了封装，使这些API应用难度大大降低。</p>
+<ul>
+<li>Spring依赖反射，反射影响性能</li>
+</ul>
+<h2 id="spring模块"><a href="#spring模块" class="headerlink" title="spring模块"></a>spring模块</h2><img src="https://img-blog.csdnimg.cn/2019102923475419.png" alt="在这里插入图片描述" style="zoom:67%;" />
+
+<h2 id="设计模式"><a href="#设计模式" class="headerlink" title="设计模式"></a>设计模式</h2><ul>
+<li>工厂模式：BeanFactory就是简单工厂模式的体现，用来创建对象的实例；</li>
+<li>单例模式：Bean默认为单例模式。</li>
+<li>代理模式：Spring的AOP功能用到了JDK的动态代理和CGLIB字节码生成技术；</li>
+<li>模板方法：用来解决代码重复的问题。比如. RestTemplate, JmsTemplate, JpaTemplate。</li>
+<li>观察者模式：定义对象键一种一对多的依赖关系，当一个对象的状态发生改变时，所有依赖于它的对象都会得到通知被制动更新，如Spring中listener的实现–ApplicationListener。</li>
+</ul>
+<h2 id="spring-context"><a href="#spring-context" class="headerlink" title="spring context"></a>spring context</h2><p>提供spring 框架的基础功能，BeanFactory 是 任何以spring为基础的应用的核心。</p>
+<p>Bean 工厂是工厂模式的一个实现，提供了控制反转功能，用来把应用的配置和依赖从真正的应用代码中分离。最常用的就是XmlBeanFactory ，它根据XML文件中的定义加载beans。该容器从XML 文件读取配置元数据并用它去创建一个完全配置的系统或应用。</p>
+<h2 id="事件"><a href="#事件" class="headerlink" title="事件"></a>事件</h2><p>上下文更新事件：在调用ConfigurableApplicationContext 接口中的<strong>refresh</strong>()方法时被触发。</p>
+<p>上下文开始事件：当容器调用ConfigurableApplicationContext的<strong>Start</strong>()方法开始/重新开始容器时触发该事件。</p>
+<p>上下文停止事件：当容器调用ConfigurableApplicationContext的<strong>Stop</strong>()方法停止容器时触发该事件。</p>
+<p>上下文关闭事件：当<strong>ApplicationContext</strong>被关闭时触发该事件。容器被关闭时，其管理的所有单例Bean都被销毁。</p>
+<p>请求处理事件：在Web应用中，当一个http请求（request）结束触发该事件。如果一个bean实现了ApplicationListener接口，当一个ApplicationEvent 被发布以后，bean会自动被通知。</p>
+<h2 id="IOC"><a href="#IOC" class="headerlink" title="IOC"></a>IOC</h2><p>控制反转把传统上由程序代码直接操控的对象的调用权交给容器，通过容器来实现对象组件的装配和管理。所谓的“控制反转”概念就是对组件对象控制权的转移，从程序代码本身转移到了外部容器。</p>
+<p>Spring IOC 负责创建对象，管理对象（通过依赖注入（DI），装配对象，配置对象，并且管理这些对象的整个生命周期。</p>
+<p>DI是IOC的一个功能</p>
+<p><strong>优点</strong></p>
+<ul>
+<li>代码量降到最低。</li>
+<li>最小的代价和最小的侵入性使松散耦合得以实现。</li>
+<li>支持加载服务时的饿汉式初始化和懒加载。</li>
+</ul>
+<p><strong>实现原理</strong>：工厂模式+反射</p>
+<h2 id="ApplicationContext的实现"><a href="#ApplicationContext的实现" class="headerlink" title="ApplicationContext的实现"></a>ApplicationContext的实现</h2><p>FileSystemXmlApplicationContext ：一个XML文件中加载beans的定义，XML Bean 配置文件的全路径名必须提供给它的构造函数。</p>
+<p>ClassPathXmlApplicationContext：一个XML文件中加载beans的定义，你需要正确设置classpath因为这个容器将在classpath里找bean配置。</p>
+<p>WebXmlApplicationContext：一个XML文件定义了一个WEB应用的所有bean。</p>
+<h2 id="BeanFactory-和-ApplicationContext"><a href="#BeanFactory-和-ApplicationContext" class="headerlink" title="BeanFactory 和 ApplicationContext"></a>BeanFactory 和 ApplicationContext</h2><p>BeanFactory和ApplicationContext是Spring的两大核心接口，都可以当做Spring的容器。其中ApplicationContext是BeanFactory的子接口。</p>
+<p>BeanFactory：是Spring里面最底层的接口，包含了各种Bean的定义，读取bean配置文档，管理bean的加载、实例化，控制bean的生命周期，维护bean之间的依赖关系。</p>
+<p>ApplicationContext接口作为BeanFactory的派生，除了提供BeanFactory所具有的功能外，还提供了更完整的框架功能：</p>
+<ul>
+<li><p>继承MessageSource，因此支持<strong>国际化</strong>。</p>
+</li>
+<li><p>统一的资源文件访问方式。</p>
+</li>
+<li><p>提供在监听器中注册bean的事件。</p>
+</li>
+<li><p>同时加载<strong>多个配置文件</strong>。</p>
+</li>
+</ul>
+<p><strong>加载方式</strong></p>
+<p>BeanFactroy采用的是延迟加载形式来注入Bean的，即只有在使用到某个Bean时(调用getBean())，才对该Bean进行加载实例化。这样，我们就不能发现一些存在的Spring的配置问题。如果Bean的某一个属性没有注入，BeanFacotry加载后，直至第一次使用调用getBean方法才会抛出异常。</p>
+<p>ApplicationContext，它是在容器启动时，一次性创建了所有的Bean。这样，在容器启动时，我们就可以发现Spring中存在的配置错误，这样有利于检查所依赖属性是否注入。 ApplicationContext启动后预载入所有的单实例Bean，通过预载入单实例bean ,确保当你需要的时候，你就不用等待，因为它们已经创建好了。</p>
+<p>相对于基本的BeanFactory，ApplicationContext 唯一的不足是占用内存空间。当应用程序配置Bean较多时，程序启动较慢。</p>
+<p><strong>创建方式</strong></p>
+<p>BeanFactory通常以<strong>编程</strong>的方式被创建，ApplicationContext还能以<strong>声明</strong>的方式创建，如使用ContextLoader。</p>
+<p><strong>注册方式</strong></p>
+<p>BeanFactory和ApplicationContext都支持BeanPostProcessor、BeanFactoryPostProcessor的使用，但两者之间的区别是：BeanFactory需要<strong>手动</strong>注册，而ApplicationContext则是<strong>自动</strong>注册。</p>
+<p><img src="https://img-blog.csdnimg.cn/20191105111441363.png" alt="img"></p>
+<p>低级容器 <strong>BeanFactory</strong></p>
+<ul>
+<li><p>加载配置文件，解析成 BeanDefinition 放在 Map 里。</p>
+</li>
+<li><p>调用 getBean 的时候，从 BeanDefinition 所属的 Map 里，拿出 Class 对象进行实例化，同时，如果有依赖关系，将递归调用 getBean 方法 —— 完成依赖注入。</p>
+</li>
+</ul>
+<p>高级容器 <strong>ApplicationContext</strong></p>
+<p>他包含了低级容器的功能，当他执行 refresh 模板方法的时候，将刷新整个容器的 Bean。同时其作为高级容器，包含了太多的功能。一句话，他不仅仅是 IoC。他支持不同信息源头，支持 BeanFactory 工具类，支持层级容器，支持访问文件资源，支持事件发布通知，支持接口回调等等。</p>
+<h2 id="DI"><a href="#DI" class="headerlink" title="DI"></a>DI</h2><p>IoC是一个很大的概念，可以用不同的方式来实现：依赖注入和依赖查找</p>
+<p>依赖注入：组件之间的依赖关系由容器在应用系统<strong>运行期</strong>来决定，也就是由<strong>容器动态地</strong>将某种依赖关系的目标对象实例注入到应用系统中的各个关联的组件之中。</p>
+<p>让<strong>容器全权负责依赖查询</strong>，受管组件只需要暴露JavaBean的setter方法或者带参数的构造器或者接口，使容器可以在初始化时组装对象的依赖关系。</p>
+<h2 id="DI-实现"><a href="#DI-实现" class="headerlink" title="DI 实现"></a>DI 实现</h2><ul>
+<li><p>接口注入由于在灵活性和易用性比较差，现在从Spring4开始已被废弃。</p>
+</li>
+<li><p>构造器依赖注入：构造器依赖注入通过容器触发一个类的构造器来实现的，该类有一系列参数，每个参数代表一个对其他类的依赖。</p>
+</li>
+<li><p>Setter方法注入：Setter方法注入是容器通过调用无参构造器或无参static工厂 方法实例化bean之后，调用该bean的setter方法，即实现了基于setter的依赖注入。</p>
+</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th align="center"><strong>构造函数注入</strong></th>
+<th align="center"><strong>setter</strong> <strong>注入</strong></th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">没有部分注入</td>
+<td align="center">有部分注入</td>
+</tr>
+<tr>
+<td align="center">不会覆盖 setter 属性</td>
+<td align="center">会覆盖 setter 属性</td>
+</tr>
+<tr>
+<td align="center">任意修改都会创建一个新实例</td>
+<td align="center">任意修改不会创建一个新实例</td>
+</tr>
+<tr>
+<td align="center">适用于设置很多属性</td>
+<td align="center">适用于设置少量属性</td>
+</tr>
+</tbody></table>
+<p>最好的解决方案是用<strong>构造器参数实现强制依赖，setter方法实现可选依赖</strong>。</p>
+<h2 id="bean属性赋值（创建bean）"><a href="#bean属性赋值（创建bean）" class="headerlink" title="bean属性赋值（创建bean）"></a>bean属性赋值（创建bean）</h2><ul>
+<li><p>setter</p>
+</li>
+<li><p>constructor</p>
+<ul>
+<li><p>索引值index指定参数位置</p>
+</li>
+<li><p>类型不同区分重载的构造器</p>
+</li>
+</ul>
+</li>
+<li><p>工厂</p>
+<ul>
+<li>静态工厂：将对象创建的过程封装到静态方法中。当客户端需要对象时，只需要简单地调用静态方法，而不用关心创建对象的细节。</li>
+<li>实例工厂：将对象的创建过程封装到另外一个对象实例的方法里。当客户端需要请求对象时，只需要简单的调用该实例方法而不需要关心对象的创建细节。</li>
+<li>FactoryBean 工厂bean：跟普通bean不同，其返回的对象不是指定类的一个实例，其返回的是该工厂bean的getObject方法所返回的对象。</li>
+</ul>
+</li>
+</ul>
+<h2 id="作用域scope"><a href="#作用域scope" class="headerlink" title="作用域scope"></a>作用域scope</h2><ul>
+<li>singleton : bean在每个Spring ioc 容器中只有一个实例。</li>
+<li>prototype：一个bean的定义可以有多个实例。</li>
+<li>request：每次http请求都会创建一个bean，该作用域仅在基于web的Spring ApplicationContext情形下有效。</li>
+<li>session：在一个HTTP Session中，一个bean定义对应一个实例。该作用域仅在基于web的Spring ApplicationContext情形下有效。</li>
+<li>global-session：在一个全局的HTTP Session中，一个bean定义对应一个实例。该作用域仅在基于web的Spring ApplicationContext情形下有效。</li>
+</ul>
+<p>注意： 缺省的Spring bean 的作用域是Singleton。使用 prototype 作用域需要慎重的思考，因为频繁创建和销毁 bean 会带来很大的性能开销。</p>
+<h2 id="bean线程安全"><a href="#bean线程安全" class="headerlink" title="bean线程安全"></a>bean线程安全</h2><p>Spring框架中的单例<strong>bean不是线程安全的</strong>。</p>
+<p>spring 中的 bean 默认是单例模式，spring 框架并没有对单例 bean 进行多线程的封装处理。</p>
+<p>实际上大部分时候 spring bean 无状态的（比如 dao 类），所有某种程度上来说 bean 也是安全的，但如果 bean 有状态的话，那就要开发者自己去保证线程安全了，最简单的就是改变 bean 的作用域，把“singleton”变更为“prototype”，这样请求 bean 相当于 new Bean()了，所以就可以保证线程安全了。</p>
+<p>有状态就是有数据存储功能，无状态就是不会保存数据。</p>
+<h2 id="线程并发问题"><a href="#线程并发问题" class="headerlink" title="线程并发问题"></a>线程并发问题</h2><p>在一般情况下，只有无状态的Bean才可以在多线程环境下共享，在Spring中，绝大部分Bean都可以声明为singleton作用域，因为Spring对一些Bean中非线程安全状态采用<strong>ThreadLocal</strong>进行处理，解决线程安全问题。</p>
+<p>解决多线程中相同变量的访问冲突问题：</p>
+<ul>
+<li>同步机制采用了“时间换空间”的方式，仅提供一份变量，不同的线程在访问前需要获取锁，没获得锁的线程则需要排队。</li>
+<li>ThreadLocal采用了“空间换时间”的方式。</li>
+</ul>
+<p>ThreadLocal会为每一个线程提供一个独立的变量副本，从而隔离了多个线程对数据的访问冲突。因为每一个线程都拥有自己的变量副本，从而也就没有必要对该变量进行同步了。ThreadLocal提供了线程安全的共享对象，在编写多线程代码时，可以把不安全的变量封装进ThreadLocal。</p>
+<h2 id="bean生命周期"><a href="#bean生命周期" class="headerlink" title="bean生命周期"></a>bean生命周期</h2><p>在传统的Java应用中，bean的生命周期很简单。使用Java关键字new进行bean实例化，然后该bean就可以使用了。一旦该bean不再被使用，则由Java自动进行垃圾回收。</p>
+<p><img src="https://img-blog.csdnimg.cn/201911012343410.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L1RoaW5rV29u,size_16,color_FFFFFF,t_70" alt="img"></p>
+<p>①Spring IOC容器可以管理bean的生命周期，Spring允许在bean生命周期内特定的时间点执行指定的任务。</p>
+<p>②Spring IOC容器对bean的生命周期进行管理的过程：</p>
+<p>​    [1]通过构造器或工厂方法创建bean实例</p>
+<p>​    [2]为bean的属性设置值和对其他bean的引用</p>
+<p>​    [3]调用bean的初始化方法</p>
+<p>​    [4]bean可以使用了</p>
+<p>​    [5]当容器关闭时，调用bean的销毁方法</p>
+<p>③在配置bean时，通过init-method和destroy-method 属性为bean指定初始化和销毁方法</p>
+<p>④bean的后置处理器</p>
+<p>​    [1]bean后置处理器允许在调用<strong>初始化方法前后</strong>对bean进行额外的处理</p>
+<p>​    [2]bean后置处理器对IOC容器里的所有bean实例逐一处理，而非单一实例。其典型应用是：检查bean属性的正确性或根据特定的标准更改bean的属性。</p>
+<p>​    [3] bean后置处理器时需要实现接口：org.springframework.beans.factory.config.BeanPostProcessor。在初始化方法被调用前后，Spring将把每个bean实例分别传递给上述接口的以下两个方法：</p>
+<p>​    postProcessBeforeInitialization(Object, String)</p>
+<p>​    postProcessAfterInitialization(Object, String)</p>
+<p>⑤添加bean后置处理器后bean的生命周期</p>
+<p>​    [1]通过构造器或工厂方法<strong>创建bean实例</strong></p>
+<p>​    [2]为bean的<strong>属性设置值</strong>和对其他bean的引用</p>
+<p>​    [3]将bean实例传递给bean后置处理器的**postProcessBeforeInitialization()**方法</p>
+<p>​    [4]调用bean的<strong>初始化</strong>方法</p>
+<p>​    [5]将bean实例传递给bean后置处理器的**postProcessAfterInitialization()**方法</p>
+<p>​    [6]bean可以使用了</p>
+<p>​    [7]当容器关闭时调用bean的<strong>销毁方法</strong></p>
+<h2 id="bean生命周期方法"><a href="#bean生命周期方法" class="headerlink" title="bean生命周期方法"></a>bean生命周期方法</h2><ul>
+<li><p>setup：在容器加载bean的时候被调用。</p>
+</li>
+<li><p>teardown：在容器卸载类的时候被调用。</p>
+</li>
+</ul>
+<p>bean 标签有两个重要的属性（ init-method 和 destroy-method ）。用它们你可以自己定制初始化和注销方法。它们也有相应的注解（@PostConstruct和@PreDestroy）。</p>
+<h2 id="内部bean"><a href="#内部bean" class="headerlink" title="内部bean"></a>内部bean</h2><p>当一个bean仅被用作另一个bean的属性时，它能被声明为一个内部bean。</p>
+<p>内部bean可以用setter注入“属性”和构造方法注入“构造参数”的方式来实现，内部bean通常是匿名的，它们的Scope一般是prototype。</p>
+<h2 id="注入集合"><a href="#注入集合" class="headerlink" title="注入集合"></a>注入集合</h2><p><list>，<set>、<map>、<props></p>
+<h2 id="自动装配"><a href="#自动装配" class="headerlink" title="自动装配"></a>自动装配</h2><ul>
+<li><p>手动装配：以value或ref的方式<strong>明确指定属性值</strong>都是手动装配。</p>
+</li>
+<li><p>自动装配：根据指定的装配规则，<strong>不需要明确指定</strong>，Spring<strong>自动</strong>将匹配的属性值<strong>注入</strong>bean中。</p>
+</li>
+</ul>
+<p>方式：</p>
+<ul>
+<li><p>no：默认的方式是不进行自动装配的，通过手工设置ref属性来进行装配bean。</p>
+</li>
+<li><p>byName：通过bean的名称进行自动装配，如果一个bean的 property 与另一bean 的name 相同，就进行自动装配。</p>
+</li>
+<li><p>byType：通过参数的数据类型进行自动装配。</p>
+</li>
+<li><p>constructor：利用构造函数进行装配，并且构造函数的参数通过byType进行装配。</p>
+</li>
+<li><p>autodetect：自动探测，若有构造方法则construct，否则 byType。</p>
+</li>
+</ul>
+<h2 id="Autowired"><a href="#Autowired" class="headerlink" title="@Autowired"></a>@Autowired</h2><p>@Autowired可用于：构造函数、属性、Setter方法</p>
+<p>使用之前需要在Spring配置文件进行配置，&lt;context:annotation-config /&gt;。</p>
+<p>在启动spring IoC时，容器自动装载了一个AutowiredAnnotationBeanPostProcessor后置处理器，当容器扫描到@Autowied、@Resource或@Inject时，就会在IoC容器自动查找需要的bean，并装配给该对象的属性。</p>
+<p>在使用@Autowired时，首先在容器中查询对应<strong>类型</strong>的bean：</p>
+<p>如果查询结果刚好为一个，就将该bean装配给@Autowired指定的数据；</p>
+<p>如果查询的结果不止一个，那么@Autowired会根据<strong>名称</strong>来查找；</p>
+<p>如果上述查找的结果为空，那么会抛出异常。解决方法时，使用required=false。</p>
+<h2 id="注解"><a href="#注解" class="headerlink" title="注解"></a>注解</h2><p>@Component：这将 java 类标记为 bean，通用构造型。</p>
+<p>@Controller：标记为 Spring Web MVC 控制器。</p>
+<p>@Service：此注解是组件注解的特化。它不会对 @Component 注解提供任何其他行为。</p>
+<p>@Repository：这个注解是具有类似用途和功能的 @Component 注解的特化。它为 DAO 提供了额外的好处。它将 DAO 导入 IoC 容器，并使未经检查的异常有资格转换为 Spring DataAccessException。</p>
+<p><strong>@Required</strong>：表明bean的属性必须在配置的时候设置，通过一个bean定义的显式的属性值或通过自动装配，未配置未被设置，容器将抛出异常；</p>
+<h3 id="Autowired和-Resource"><a href="#Autowired和-Resource" class="headerlink" title="@Autowired和@Resource"></a>@Autowired和@Resource</h3><p>@Autowired：默认是<strong>按照类型</strong>装配注入的，默认情况下它要求依赖对象必须存在（可以设置它required属性为false）。</p>
+<p>@Resource：默认是<strong>按照名称</strong>来装配注入的，只有当找不到与名称匹配的bean才会按照类型来装配注入。</p>
+<p>@Inject和：<strong>按类型</strong>注入匹配的bean，但没有reqired属性。</p>
+<h2 id="Qualifier"><a href="#Qualifier" class="headerlink" title="@Qualifier"></a>@Qualifier</h2><p>当您创建多个相同类型的 bean 并希望仅使用属性装配其中一个 bean 时，您可以使用@Qualifier 注解和 @Autowired 通过指定应该装配哪个确切的 bean 来消除歧义。</p>
+<h2 id="JdbcTemplate"><a href="#JdbcTemplate" class="headerlink" title="JdbcTemplate"></a>JdbcTemplate</h2><p>JdbcTemplate 类提供了很多便利的方法解决诸如把数据库数据转变成基本数据类型或对象，执行写好的或可调用的数据库操作语句，提供自定义的数据错误处理。</p>
+<h2 id="事务管理类型"><a href="#事务管理类型" class="headerlink" title="事务管理类型"></a>事务管理类型</h2><ul>
+<li><p>编程式事务管理：这意味你通过编程的方式管理事务，给你带来极大的灵活性，但是难维护。</p>
+</li>
+<li><p>声明式事务管理：这意味着你可以将业务代码和事务管理分离，你只需用注解和XML配置来管理事务。</p>
+</li>
+</ul>
+<p>使用原生的<strong>JDBC API</strong>实现事务管理是所有事务管理方式的基石，同时也是最典型的编程式事务管理。编程式事务管理需要将事务管理代码<strong>嵌入到业务方法中</strong>来控制事务的提交和回滚。在使用编程的方式管理事务时，必须在每个事务操作中包含额外的事务管理代码。相对于<strong>核心业务</strong>而言，事务管理的代码显然属于<strong>非核心业务</strong>，如果多个模块都使用同样模式的代码进行事务管理，显然会造成较大程度的<strong>代码冗余</strong>。</p>
+<p>大多数情况下声明式事务比编程式事务管理更好：它将事务管理代码从业务方法中分离出来，以声明的方式来实现事务管理。唯一不足地方是，最细粒度只能作用到方法级别，无法做到像编程式事务那样可以作用到<strong>代码块级别</strong>。</p>
+<p>事务管理代码的固定模式作为一种<strong>横切关注点</strong>，可以通过<strong>AOP</strong>方法模块化，进而借助<strong>Spring AOP</strong>框架实现声明式事务管理。</p>
+<p><strong>实现原理</strong><br>Spring事务的本质其实就是数据库对事务的支持，没有数据库的事务支持，spring是无法提供事务功能的。真正的数据库层的事务提交和回滚是通过binlog或者redo log实现的。</p>
+<h3 id="事务传播行为"><a href="#事务传播行为" class="headerlink" title="事务传播行为"></a>事务传播行为</h3><p>当事务方法被另一个事务方法调用时，必须指定事务应该如何传播。例如：方法可能继续在现有事务中运行，也可能开启一个新事务，并在自己的事务中运行。</p>
+<p>Spring定义了7种类传播行为。</p>
+<p><img src="/images/Spring/clip_image002.jpg" alt="img"></p>
+<p>事务传播属性可以在@Transactional注解的<strong>propagation</strong>属性中定义。</p>
+<p>事务隔离级别可以在@Transactional注解的<strong>isolation</strong>属性中定义。</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>脏读</th>
+<th>不可重复读</th>
+<th>幻读</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>READ UNCOMMITTED</td>
+<td>有</td>
+<td>有</td>
+<td>有</td>
+</tr>
+<tr>
+<td>READ COMMITTED</td>
+<td>无</td>
+<td>有</td>
+<td>有</td>
+</tr>
+<tr>
+<td>REPEATABLE READ</td>
+<td>无</td>
+<td>无</td>
+<td>有</td>
+</tr>
+<tr>
+<td>SERIALIZABLE</td>
+<td>无</td>
+<td>无</td>
+<td>无</td>
+</tr>
+</tbody></table>
+<h2 id="AOP"><a href="#AOP" class="headerlink" title="AOP"></a>AOP</h2><p>一般称为面向切面编程，作为面向对象的一种补充，用于将那些与业务无关，但却对多个对象产生影响的公共行为和逻辑，抽取并封装为一个可重用的模块，这个模块被命名为“切面”（Aspect），减少系统中的重复代码，降低了模块间的耦合度，同时提高了系统的可维护性。可用于<strong>权限认证、日志、事务处理</strong>等。</p>
+<h2 id="AspectJ-AOP"><a href="#AspectJ-AOP" class="headerlink" title="AspectJ AOP"></a>AspectJ AOP</h2><p>AOP实现的关键在于 代理模式，AOP代理主要分为静态代理和动态代理。</p>
+<p>静态代理的代表为AspectJ；动态代理则以Spring AOP为代表。</p>
+<ul>
+<li><p>AspectJ是静态代理的增强，所谓静态代理，就是AOP框架会在<strong>编译阶段生成AOP代理类</strong>，因此也称为编译时增强，他会在编译阶段将AspectJ(切面)<strong>织入到Java字节码</strong>中，运行的时候就是增强之后的AOP对象。</p>
+</li>
+<li><p>Spring AOP使用的动态代理，所谓的动态代理就是说AOP框架<strong>不会去修改字节码</strong>，而是<strong>每次运行时</strong>在内存中临时为方法生成一个AOP对象，这个AOP对象包含了目标对象的全部方法，并且在特定的切点做了<strong>增强处理</strong>，并回调原对象的方法。</p>
+</li>
+</ul>
+<p>静态代理与动态代理区别在于生成AOP代理对象的时机不同，相对来说AspectJ的静态代理方式具有更好的性能，但是AspectJ需要特定的编译器进行处理，而Spring AOP则无需特定的编译器处理。</p>
+<h2 id="JDK动态代理和CGLIB动态代理的区别"><a href="#JDK动态代理和CGLIB动态代理的区别" class="headerlink" title="JDK动态代理和CGLIB动态代理的区别"></a>JDK动态代理和CGLIB动态代理的区别</h2><p>Spring AOP中的动态代理主要有两种方式，JDK动态代理和CGLIB动态代理：</p>
+<ul>
+<li>JDK动态代理<strong>只提供接口的代理，不支持类的代理</strong>。核心InvocationHandler接口和Proxy类，InvocationHandler 通过invoke()方法反射来调用目标类中的代码，动态地将横切逻辑和业务编织在一起；接着，Proxy利用 InvocationHandler动态创建一个符合某一接口的的实例, 生成目标类的代理对象。</li>
+</ul>
+<p>如果代理类没有实现 InvocationHandler 接口，那么Spring AOP会选择使用CGLIB来动态代理目标类。</p>
+<ul>
+<li>CGLIB（Code Generation Library），是一个<strong>代码生成</strong>的类库，可以在运行时动态的生成指定类的一个子类对象，并覆盖其中特定方法并添加增强代码，从而实现AOP。CGLIB是通过<strong>继承</strong>的方式做的动态代理，因此如果某个类被标记为final，那么它是无法使用CGLIB做动态代理的。</li>
+</ul>
+<p>InvocationHandler 的 invoke(Object proxy,Method method,Object[] args)：proxy是最终生成的代理实例; method 是被代理目标实例的某个具体方法; args 是被代理目标实例某个方法的具体入参, 在方法反射调用时使用。</p>
+<h2 id="几个名词"><a href="#几个名词" class="headerlink" title="几个名词"></a>几个名词</h2><img src="/images/Spring/aop.png" style="zoom: 50%;" />
+
+<ul>
+<li><p>横切关注点：从每个方法中抽取出来的同一类非核心业务。</p>
+</li>
+<li><p>切面（Aspect）：封装横切关注点信息的类，每个关注点体现为一个通知方法。 </p>
+</li>
+<li><p>通知（Advice)：切面必须要完成的各个具体工作。</p>
+</li>
+<li><p>连接点（Joinpoint)：横切关注点在程序代码中的具体体现，对应程序执行的某个特定位置。例如：类某个方法调用前、调用后、方法捕获到异常后等。在应用程序中可以使用横纵两个坐标来定位一个具体的连接点。</p>
+</li>
+<li><p>切入点（pointcut)：定位连接点的方式。每个类的方法中都包含多个连接点，所以连接点是类中客观存在的事物。如果把连接点看作数据库中的记录，那么切入点就是查询条件——AOP可以<strong>通过切入点定位到特定的连接点</strong>。切点通过Pointcut 接口进行描述，它使用类和方法作为连接点的查询条件。</p>
+</li>
+<li><p>目标（Target)：被通知的对象</p>
+</li>
+<li><p>代理（Proxy)：向目标对象应用通知之后创建的代理对象</p>
+</li>
+<li><p>织入（Weaving）：织入是把切面应用到目标对象并创建新的代理对象的过程。在目标对象的生命周期里有多少个点可以进行织入：</p>
+<ul>
+<li>编译期：切面在目标类编译时被织入。AspectJ的织入编译器是以这种方式织入切面的。java -&gt;  class</li>
+<li>类加载期：切面在目标类加载到JVM时被织入。需要特殊的类加载器，它可以在目标类被引入应用之前增强该目标类的字节码。AspectJ5的加载时织入就支持以这种方式织入切面。class -&gt; 内存</li>
+<li>运行期：切面在应用运行的某个时刻被织入。一般情况下，在织入切面时，AOP容器会为目标对象动态地创建一个代理对象。SpringAOP就是以这种方式织入切面。</li>
+</ul>
+</li>
+</ul>
+<h2 id="关注点和横切关注点"><a href="#关注点和横切关注点" class="headerlink" title="关注点和横切关注点"></a>关注点和横切关注点</h2><p>关注点（concern）是应用中一个模块的行为，一个关注点可能会被定义成一个我们想实现的一个功能。</p>
+<p>横切关注点（cross-cutting concern）是一个关注点，此关注点是整个应用都会使用的功能，并影响整个应用，比如日志，安全和数据传输，几乎应用的每个模块都需要的功能。因此这些都属于横切关注点。</p>
+<h2 id="运行时通知对象"><a href="#运行时通知对象" class="headerlink" title="运行时通知对象"></a>运行时通知对象</h2><p>通过在代理类中包裹切面，Spring在运行期把切面织入到Spring管理的bean中。代理封装了目标类，并拦截被通知方法的调用，再把调用转发给真正的目标bean。当代理拦截到方法调用时，在调用目标bean方法之前，会执行切面逻辑。</p>
+<p>直到应用需要被代理的bean时，Spring才创建代理对象。如果使用的是ApplicationContext的话，在ApplicationContext从BeanFactory中加载所有bean的时候，Spring才会创建被代理的对象。因为Spring运行时才创建代理对象，所以我们不需要特殊的编译器来织入SpringAOP的切面。</p>
+<h2 id="Spring只支持方法级别的连接点"><a href="#Spring只支持方法级别的连接点" class="headerlink" title="Spring只支持方法级别的连接点"></a>Spring只支持方法级别的连接点</h2><p>因为Spring基于动态代理，所以Spring只支持方法连接点。<strong>Spring缺少对字段连接点的支持，而且它不支持构造器连接点。</strong>方法之外的连接点拦截功能，我们可以利用Aspect来补充。</p>
+<h2 id="通知类型"><a href="#通知类型" class="headerlink" title="通知类型"></a>通知类型</h2><ul>
+<li>前置通知（Before）：调用之前</li>
+<li>后置通知（After）：方法完成之后</li>
+<li>返回通知（After-returning ）：方法成功执行之后</li>
+<li>异常通知（After-throwing）：方法抛出异常后</li>
+<li>环绕通知（Around）：通知包裹了被通知的方法，在被通知的方法调用之前和调用之后执行自定义的行为。</li>
+</ul>
+<p>环绕通知是所有通知类型中功能最为强大的，能够全面地控制连接点，甚至可以控制是否执行连接点。</p>
+<p>明确调用ProceedingJoinPoint的proceed()方法来执行被代理的方法。如果忘记这样做就会导致通知被执行了，但目标方法没有被执行。</p>
+<p><strong>同一个aspect，不同advice的执行顺序</strong></p>
+<p>around 优先于其他</p>
+<ul>
+<li>没有异常</li>
+</ul>
+<p>around before<br>before<br>target method 执行<br>around after<br>after<br>afterReturning</p>
+<ul>
+<li>有异常</li>
+</ul>
+<p>around before<br>before<br>target method 执行<br>around after<br>after<br>afterThrowing:异常发生<br>java.lang.RuntimeException: 异常发生</p>
+<h2 id="切面-Aspect"><a href="#切面-Aspect" class="headerlink" title="切面 Aspect"></a>切面 Aspect</h2><p>aspect 由 pointcount 和 advice 组成，切面是通知和切点的结合。 </p>
+<p>它既包含了横切逻辑的定义, 也包括了连接点的定义. Spring AOP 就是负责实施切面的框架, 它将切面所定义的横切逻辑编织到切面所指定的连接点中.<br>AOP 的工作重心在于如何将增强编织目标对象的连接点上, 这里包含两个工作:</p>
+<p>如何通过 pointcut 和 advice 定位到特定的 joinpoint 上<br>如何在 advice 中编写切面代码.<br>可以简单地认为, 使用 @Aspect 注解的类就是切面.</p>
+
+      
+    </div>
+
+  </div>
+
+  <div class="article-footer">
+    <div class="article-meta pull-left">
+
+    
+      
+
+    <span class="post-categories">
+      <i class="icon-categories"></i>
+        <a href="/categories/Study/">Study</a>
+    </span>
+    
+
+    
+    
+
+    <span class="post-tags">
+      <i class="icon-tags"></i>
+        <a href="/tags/Spring/">Spring</a>
+    </span>
+    
+
+    </div>
+
+    
+  </div>
+</article>
+
+
+
+  <article>
+
+  
+    
+    <h3 class="article-title"><a href="/os-interview.html"><span>操作系统笔记</span></a></h3>
+    
+  
+
+  <div class="article-top-meta">
+    <span class="posted-on">
+      <a href="/os-interview.html" rel="bookmark">
+        <time class="entry-date published" datetime="2021-03-24T10:10:19.000Z">
+          2021-03-24
+        </time>
+      </a>
+    </span>
+  </div>
+
+
+  
+
+  <div class="article-content">
+    <div class="entry">
+      
+        <p>概述、启动中断异常和系统调用、连续内存分配、非连续内存分配、虚拟内存、页面置换算法、进程、处理器调度、同步互斥问题、死锁问题。</p>
+<p>5.5万字，252张图，150页，超长总结。</p>
+        
+      
+    </div>
+
+  </div>
+
+  <div class="article-footer">
+    <div class="article-meta pull-left">
+
+    
+      
+
+    <span class="post-categories">
+      <i class="icon-categories"></i>
+        <a href="/categories/Study/">Study</a>
+    </span>
+    
+
+    
+    
+
+    <span class="post-tags">
+      <i class="icon-tags"></i>
+        <a href="/tags/OS/">OS</a>
+    </span>
+    
+
+    </div>
+
+    
+  </div>
+</article>
+
+
+
+  <article>
+
+  
+    
+    <h3 class="article-title"><a href="/os.html"><span>操作系统引论</span></a></h3>
+    
+  
+
+  <div class="article-top-meta">
+    <span class="posted-on">
+      <a href="/os.html" rel="bookmark">
+        <time class="entry-date published" datetime="2021-03-16T07:34:23.000Z">
+          2021-03-16
+        </time>
+      </a>
+    </span>
+  </div>
+
+
+  
+
+  <div class="article-content">
+    <div class="entry">
+      
+        <p>准备的书太拉跨，不准备继续总结了</p>
+        
+      
+    </div>
+
+  </div>
+
+  <div class="article-footer">
+    <div class="article-meta pull-left">
+
+    
+      
+
+    <span class="post-categories">
+      <i class="icon-categories"></i>
+        <a href="/categories/Study/">Study</a>
+    </span>
+    
+
+    
+    
+
+    <span class="post-tags">
+      <i class="icon-tags"></i>
+        <a href="/tags/OS/">OS</a>
+    </span>
+    
+
+    </div>
+
+    
+  </div>
+</article>
+
+
+
+  <article>
+
+  
+    
+    <h3 class="article-title"><a href="/network-basic.html"><span>计算机网络</span></a></h3>
+    
+  
+
+  <div class="article-top-meta">
+    <span class="posted-on">
+      <a href="/network-basic.html" rel="bookmark">
+        <time class="entry-date published" datetime="2021-03-14T03:39:36.000Z">
+          2021-03-14
+        </time>
+      </a>
+    </span>
+  </div>
+
+
+  
+
+  <div class="article-content">
+    <div class="entry">
+      
+        <p>概述、物理层、数据链路层、网络层、运输层、应用层。</p>
+<p>70页、5万字，超长总结。</p>
+        
+      
+    </div>
+
+  </div>
+
+  <div class="article-footer">
+    <div class="article-meta pull-left">
+
+    
+      
+
+    <span class="post-categories">
+      <i class="icon-categories"></i>
+        <a href="/categories/Study/">Study</a>
+    </span>
+    
+
+    
+    
+
+    <span class="post-tags">
+      <i class="icon-tags"></i>
+        <a href="/tags/Network/">Network</a>
+    </span>
+    
+
+    </div>
+
+    
+  </div>
+</article>
+
+
+
+  <article>
+
+  
+    
+    <h3 class="article-title"><a href="/webCrawler-basic.html"><span>网络爬虫基础</span></a></h3>
+    
+  
+
+  <div class="article-top-meta">
+    <span class="posted-on">
+      <a href="/webCrawler-basic.html" rel="bookmark">
+        <time class="entry-date published" datetime="2021-03-13T04:48:16.000Z">
+          2021-03-13
+        </time>
+      </a>
+    </span>
+  </div>
+
+
+  
+
+  <div class="article-content">
+    <div class="entry">
+      
+        <p>待写</p>
+        
+      
+    </div>
+
+  </div>
+
+  <div class="article-footer">
+    <div class="article-meta pull-left">
+
+    
+      
+
+    <span class="post-categories">
+      <i class="icon-categories"></i>
+        <a href="/categories/Tool/">Tool</a>
+    </span>
+    
+
+    
+
+    </div>
+
+    
+  </div>
+</article>
+
+
+
+  <article>
+
+  
+    
+    <h3 class="article-title"><a href="/lanqiao-P11.html"><span>蓝桥杯Java</span></a></h3>
+    
+  
+
+  <div class="article-top-meta">
+    <span class="posted-on">
+      <a href="/lanqiao-P11.html" rel="bookmark">
+        <time class="entry-date published" datetime="2021-03-10T12:50:02.000Z">
+          2021-03-10
+        </time>
+      </a>
+    </span>
+  </div>
+
+
+  
+
+  <div class="article-content">
+    <div class="entry">
+      
+        <p>第十一届蓝桥杯大赛软件类省赛Java大学B组第一场 &amp; 第一次校内模拟  &amp; 第三次校内模拟<br>详解及总结</p>
+        
+      
+    </div>
+
+  </div>
+
+  <div class="article-footer">
+    <div class="article-meta pull-left">
+
+    
+      
+
+    <span class="post-categories">
+      <i class="icon-categories"></i>
+        <a href="/categories/Study/">Study</a>
+    </span>
+    
+
+    
+    
+
+    <span class="post-tags">
+      <i class="icon-tags"></i>
+        <a href="/tags/lanqiao/">lanqiao</a>
+    </span>
+    
+
+    </div>
+
+    
+  </div>
+</article>
+
+
+
+  <article>
+
+  
+    
+    <h3 class="article-title"><a href="/linux-vbird-0-3.html"><span>《鸟哥的Linux私房菜》第0-3章</span></a></h3>
+    
+  
+
+  <div class="article-top-meta">
+    <span class="posted-on">
+      <a href="/linux-vbird-0-3.html" rel="bookmark">
+        <time class="entry-date published" datetime="2021-02-20T06:08:11.000Z">
+          2021-02-20
+        </time>
+      </a>
+    </span>
+  </div>
+
+
+  
+
+  <div class="article-content">
+    <div class="entry">
+      
+        <p>基础篇第 0-3 章学习笔记</p>
+        
+      
+    </div>
+
+  </div>
+
+  <div class="article-footer">
+    <div class="article-meta pull-left">
+
+    
+      
+
+    <span class="post-categories">
+      <i class="icon-categories"></i>
+        <a href="/categories/Study/">Study</a>
+    </span>
+    
+
+    
+    
+
+    <span class="post-tags">
+      <i class="icon-tags"></i>
+        <a href="/tags/linux/">linux</a>
+    </span>
+    
+
+    </div>
+
+    
+  </div>
+</article>
+
+
+
+  <article>
+
+  
+    
     <h3 class="article-title"><a href="/gitalk-405.html"><span>记一次使用Github登录Gitalk跳至首页的解决过程</span></a></h3>
     
   
@@ -246,251 +1013,13 @@
 
 
 
-  <article>
-
-  
-    
-    <h3 class="article-title"><a href="/gitalk-403.html"><span>记一次博客接入Gitalk出现403问题的解决过程</span></a></h3>
-    
-  
-
-  <div class="article-top-meta">
-    <span class="posted-on">
-      <a href="/gitalk-403.html" rel="bookmark">
-        <time class="entry-date published" datetime="2021-02-14T01:44:16.000Z">
-          2021-02-14
-        </time>
-      </a>
-    </span>
-  </div>
-
-
-  
-
-  <div class="article-content">
-    <div class="entry">
-      
-        <p>小站的评论系统始终无法接入 Gitalk，提示 403 Error</p>
-        
-      
-    </div>
-
-  </div>
-
-  <div class="article-footer">
-    <div class="article-meta pull-left">
-
-    
-      
-
-    <span class="post-categories">
-      <i class="icon-categories"></i>
-        <a href="/categories/Log/">Log</a>
-    </span>
-    
-
-    
-    
-
-    <span class="post-tags">
-      <i class="icon-tags"></i>
-        <a href="/tags/Gitalk/">Gitalk</a>
-    </span>
-    
-
-    </div>
-
-    
-  </div>
-</article>
-
-
-
-  <article>
-
-  
-    
-    <h3 class="article-title"><a href="/Hexo-Markdown-nonsupport.html"><span>Hexo中Markdown语法失效问题</span></a></h3>
-    
-  
-
-  <div class="article-top-meta">
-    <span class="posted-on">
-      <a href="/Hexo-Markdown-nonsupport.html" rel="bookmark">
-        <time class="entry-date published" datetime="2021-02-13T06:20:06.000Z">
-          2021-02-13
-        </time>
-      </a>
-    </span>
-  </div>
-
-
-  
-
-  <div class="article-content">
-    <div class="entry">
-      
-        <p>在Hexo站上用Markdown写博时发现好多语法失效问题，记录一下</p>
-        
-      
-    </div>
-
-  </div>
-
-  <div class="article-footer">
-    <div class="article-meta pull-left">
-
-    
-      
-
-    <span class="post-categories">
-      <i class="icon-categories"></i>
-        <a href="/categories/Log/">Log</a>
-    </span>
-    
-
-    
-    
-
-    <span class="post-tags">
-      <i class="icon-tags"></i>
-        <a href="/tags/Hexo/">Hexo</a><a href="/tags/Markdown/">Markdown</a>
-    </span>
-    
-
-    </div>
-
-    
-  </div>
-</article>
-
-
-
-  <article>
-
-  
-    
-    <h3 class="article-title"><a href="/Markdown.html"><span>Markdown</span></a></h3>
-    
-  
-
-  <div class="article-top-meta">
-    <span class="posted-on">
-      <a href="/Markdown.html" rel="bookmark">
-        <time class="entry-date published" datetime="2021-02-13T02:52:04.000Z">
-          2021-02-13
-        </time>
-      </a>
-    </span>
-  </div>
-
-
-  
-
-  <div class="article-content">
-    <div class="entry">
-      
-        <p>Markdown是一种轻量级标记语言，以纯文本格式快速编写文档。</p>
-        
-      
-    </div>
-
-  </div>
-
-  <div class="article-footer">
-    <div class="article-meta pull-left">
-
-    
-      
-
-    <span class="post-categories">
-      <i class="icon-categories"></i>
-        <a href="/categories/Tool/">Tool</a>
-    </span>
-    
-
-    
-    
-
-    <span class="post-tags">
-      <i class="icon-tags"></i>
-        <a href="/tags/Markdown/">Markdown</a>
-    </span>
-    
-
-    </div>
-
-    
-  </div>
-</article>
-
-
-
-  <article>
-
-  
-    
-    <h3 class="article-title"><a href="/hello-world.html"><span>Hello World</span></a></h3>
-    
-  
-
-  <div class="article-top-meta">
-    <span class="posted-on">
-      <a href="/hello-world.html" rel="bookmark">
-        <time class="entry-date published" datetime="2021-02-11T15:59:59.000Z">
-          2021-02-11
-        </time>
-      </a>
-    </span>
-  </div>
-
-
-  
-
-  <div class="article-content">
-    <div class="entry">
-      
-        <p>照例写个HelloWorld占好位置。</p>
-        
-      
-    </div>
-
-  </div>
-
-  <div class="article-footer">
-    <div class="article-meta pull-left">
-
-    
-      
-
-    <span class="post-categories">
-      <i class="icon-categories"></i>
-        <a href="/categories/Fragment/">Fragment</a>
-    </span>
-    
-
-    
-    
-
-    <span class="post-tags">
-      <i class="icon-tags"></i>
-        <a href="/tags/Hexo/">Hexo</a>
-    </span>
-    
-
-    </div>
-
-    
-  </div>
-</article>
-
-
-
 
 <nav class="pagination">
   
   <a href="/" class="pagination-prev">上一页</a>
   
+  
+  <a href="/page/3/" class="pagination-next">下一页</a>
   
 </nav>
     </main>

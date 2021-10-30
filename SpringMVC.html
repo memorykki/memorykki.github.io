@@ -1,0 +1,253 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>SpringMVC | Memorykk | never too late to learn</title>
+
+  
+  <meta name="author" content="Memorykk">
+  
+
+  
+  <meta name="description" content="computer,program,developer,java,linux">
+  
+
+  
+  <meta name="keywords" content="computer,study,log,tool,fragment,program,developer,java,linux">
+  
+
+  <meta id="viewport" name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+
+  <meta property="og:title" content="SpringMVC"/>
+
+  <meta property="og:site_name" content="Memorykk"/>
+
+  
+  <meta property="og:image" content="/images/favicon.ico"/>
+  
+
+  <link href="/images/favicon.ico" rel="icon">
+  <link rel="alternate" href="/atom.xml" title="Memorykk" type="application/atom+xml">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+  <meta name="baidu-site-verification" content="code-DBwLDCJwuQ" />
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+
+<body>
+<div class="blog">
+  <div class="content">
+
+    <header>
+  <div class="site-branding">
+    <h1 class="site-title">
+      <a href="/">Memorykk</a>
+    </h1>
+    <p class="site-description">never too late to learn</p>
+  </div>
+  <nav class="site-navigation">
+    <ul>
+      
+        <li><a href="/">主页</a></li>
+      
+        <li><a href="/categories">分类</a></li>
+      
+        <li><a href="/archives">归档</a></li>
+      
+        <li><a href="/about">关于</a></li>
+      
+        <li><a href="/atom.xml">订阅</a></li>
+      
+    </ul>
+  </nav>
+</header>
+
+    <main  class="site-main posts-loop">
+    <article>
+
+  
+    
+    <h3 class="article-title"><span>SpringMVC</span></h3>
+    
+  
+
+  <div class="article-top-meta">
+    <span class="posted-on">
+      <a href="/SpringMVC.html" rel="bookmark">
+        <time class="entry-date published" datetime="2021-08-11T02:49:13.000Z">
+          2021-08-11
+        </time>
+      </a>
+    </span>
+  </div>
+
+
+  
+
+  <div class="article-content">
+    <div class="entry">
+      
+        <span id="more"></span>
+<h2 id="SpringMVC"><a href="#SpringMVC" class="headerlink" title="SpringMVC"></a>SpringMVC</h2><p>Spring MVC是一个基于Java的实现了MVC设计模式的请求驱动类型的轻量级Web框架，通过把模型-视图-控制器分离，将web层进行职责解耦，把复杂的web应用分成逻辑清晰的几部分，简化开发，减少出错，方便组内开发人员之间的配合。</p>
+<h2 id="核心组件"><a href="#核心组件" class="headerlink" title="核心组件"></a>核心组件</h2><ul>
+<li><p>前端控制器 DispatcherServlet（不需要程序员开发）：处理所有的HTTP请求和响应，减少了其它组件之间的耦合度。</p>
+</li>
+<li><p>处理器映射器HandlerMapping（不需要程序员开发）：根据请求的URL来查找Handler</p>
+</li>
+<li><p>处理器适配器HandlerAdapter</p>
+</li>
+<li><p>处理器Handler（需要程序员开发）</p>
+</li>
+<li><p>视图解析器 ViewResolver（不需要程序员开发）：进行视图的解析，根据视图逻辑名解析成真正的视图（view）</p>
+</li>
+<li><p>视图View（需要程序员开发jsp）：View是一个接口， 它的实现类支持不同的视图类型（jsp，freemarker，pdf等等）</p>
+</li>
+</ul>
+<h2 id="控制器"><a href="#控制器" class="headerlink" title="控制器"></a>控制器</h2><p>解析用户输入并将其转换为一个由视图呈现给用户的模型。Spring用一个非常抽象的方式实现了一个控制层，允许用户创建多种用途的控制器。</p>
+<p><strong>单例模式</strong>，所以在多线程访问的时候有线程安全问题，同步会影响性能，解决方案是在控制器里面不能写字段。</p>
+<h2 id="工作原理"><a href="#工作原理" class="headerlink" title="工作原理"></a>工作原理</h2><p><strong>request -&gt; DispatcherServlet -&gt; HandlerMapping -&gt; HandlerAdapter -&gt; Handler -&gt; ModelAndView -&gt; ViewResolver -&gt; View -&gt; reponse</strong></p>
+<p>（1）用户发送请求至前端控制器DispatcherServlet；<br>（2） DispatcherServlet收到请求后，调用HandlerMapping处理器映射器，请求获取Handle；<br>（3）处理器映射器根据请求url找到具体的处理器，生成处理器对象及处理器拦截器(如果有则生成)一并返回给DispatcherServlet；<br>（4）DispatcherServlet 调用 HandlerAdapter处理器适配器；<br>（5）HandlerAdapter 经过适配调用 具体处理器(<strong>Handler</strong>，也叫后端控制器)；<br>（6）Handler执行完成返回<strong>ModelAndView</strong>；<br>（7）HandlerAdapter将Handler执行结果ModelAndView返回给DispatcherServlet；<br>（8）DispatcherServlet将ModelAndView传给ViewResolver视图解析器进行解析；<br>（9）ViewResolver解析后返回具体<strong>View</strong>；<br>（10）DispatcherServlet对View进行渲染视图（即将模型数据填充至视图中）<br>（11）DispatcherServlet响应用户。</p>
+<p><img src="/images/SpringMVC/image-20211014222339319.png" alt="image-20211014222339319"></p>
+<h2 id="MVC设计模式"><a href="#MVC设计模式" class="headerlink" title="MVC设计模式"></a>MVC设计模式</h2><p>模型（model）- 视图（view）- 控制器（controller），三层架构的设计模式。用于实现前端页面的展现与后端业务数据处理的分离。</p>
+<ul>
+<li><p>分层设计，实现了业务系统各个组件之间的解耦，有利于业务系统的可扩展性，可维护性。</p>
+</li>
+<li><p>有利于系统的并行开发，提升开发效率。</p>
+</li>
+</ul>
+<h2 id="注解"><a href="#注解" class="headerlink" title="注解"></a>注解</h2><p>@RequestMapping：用于处理请求 url 映射的注解，可用于类或方法上，用于类上表示类父路径。</p>
+<p>@RequestBody：接收http请求的json数据，将json转换为java对象。</p>
+<p>@ResponseBody：将controller方法返回对象转化为json对象响应给客户。</p>
+<p>@RestController == @ResponseBody ＋ @Controller</p>
+<h2 id="Controller"><a href="#Controller" class="headerlink" title="@Controller"></a>@Controller</h2><p>控制器Controller 负责处理由DispatcherServlet 分发的请求，它把用户请求的数据经过业务处理层处理之后封装成一个Model ，然后再把该Model 返回给对应的View 进行展示。</p>
+<p>@Controller 只是定义了一个控制器类，而使用@RequestMapping 注解的方法才是真正处理请求的处理器。</p>
+<h2 id="PathVariable-RequestParam"><a href="#PathVariable-RequestParam" class="headerlink" title="@PathVariable  @RequestParam"></a>@PathVariable  @RequestParam</h2><p>@PathVariable来获取 @RequestMapping(value = “/page/{id}”, method = RequestMethod.GET)</p>
+<p>@RequestParam用来获得静态的URL请求入参 spring注解时action里用到。</p>
+<h2 id="Spring-MVC与Struts2"><a href="#Spring-MVC与Struts2" class="headerlink" title="Spring MVC与Struts2"></a>Spring MVC与Struts2</h2><p><strong>相同点</strong></p>
+<p>都是基于mvc的表现层框架，都用于web项目的开发。</p>
+<p><strong>不同点</strong></p>
+<ul>
+<li><p><strong>前端控制器</strong>不一样。Spring MVC的前端控制器是servlet：DispatcherServlet。struts2的前端控制器是filter：StrutsPreparedAndExcutorFilter。</p>
+</li>
+<li><p><strong>请求参数的接收方式</strong>不一样。Spring MVC是使用方法的<strong>形参</strong>接收请求的参数，基于方法的开发，线程安全，可以设计为单例或者多例的开发，推荐使用单例模式的开发（执行效率更高），默认就是<strong>单例</strong>开发模式。struts2是通过<strong>类的成员变量</strong>接收请求的参数，是基于类的开发，线程不安全，只能设计为<strong>多例</strong>的开发。</p>
+</li>
+<li><p>Struts采用值栈存储请求和响应的数据，通过<strong>OGNL</strong>存取数据，Spring MVC通过<strong>参数解析器</strong>是将request请求内容解析，并给方法形参赋值，将数据和视图封装成ModelAndView对象，最后又将ModelAndView中的模型数据通过reques域传输到页面。Jsp视图解析器默认使用jstl。</p>
+</li>
+</ul>
+<h2 id="重定向和转发"><a href="#重定向和转发" class="headerlink" title="重定向和转发"></a>重定向和转发</h2><p>转发：在返回值前面加”forward:”，譬如”forward:user.do?name=method4”</p>
+<p>重定向：在返回值前面加”redirect:”，譬如”redirect:<a target="_blank" rel="noopener" href="http://www.baidu.com&quot;/">http://www.baidu.com&quot;</a></p>
+<h2 id="中文乱码"><a href="#中文乱码" class="headerlink" title="中文乱码"></a>中文乱码</h2><h3 id="POST"><a href="#POST" class="headerlink" title="POST"></a>POST</h3><p>在web.xml中配置一个CharacterEncodingFilter过滤器，设置成utf-8；</p>
+<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">filter</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">filter-name</span>&gt;</span>CharacterEncodingFilter<span class="tag">&lt;/<span class="name">filter-name</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">filter-class</span>&gt;</span>org.springframework.web.filter.CharacterEncodingFilter<span class="tag">&lt;/<span class="name">filter-class</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">init-param</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">param-name</span>&gt;</span>encoding<span class="tag">&lt;/<span class="name">param-name</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">param-value</span>&gt;</span>utf-8<span class="tag">&lt;/<span class="name">param-value</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">init-param</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">filter</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="name">filter-mapping</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">filter-name</span>&gt;</span>CharacterEncodingFilter<span class="tag">&lt;/<span class="name">filter-name</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">url-pattern</span>&gt;</span>/*<span class="tag">&lt;/<span class="name">url-pattern</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">filter-mapping</span>&gt;</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h3 id="GET"><a href="#GET" class="headerlink" title="GET"></a>GET</h3><ul>
+<li>修改tomcat配置文件添加编码与工程编码一致</li>
+</ul>
+<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line">&lt;ConnectorURIEncoding=&quot;utf-8&quot; connectionTimeout=&quot;20000&quot; port=&quot;8080&quot; protocol=&quot;HTTP/1.1&quot; redirectPort=&quot;8443&quot;/&gt;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>对参数进行重新编码：</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">String userName = <span class="keyword">new</span> String(request.getParamter(“userName”).getBytes(“ISO8859-<span class="number">1</span>”),“utf-<span class="number">8</span>”)</span><br></pre></td></tr></table></figure>
+
+<h2 id="异常处理"><a href="#异常处理" class="headerlink" title="异常处理"></a>异常处理</h2><p>可以将异常抛给Spring框架，由Spring框架来处理；我们只需要配置简单的异常处理器，在异常处理器中添视图页面即可。</p>
+<h2 id="拦截GET方式提交的方法"><a href="#拦截GET方式提交的方法" class="headerlink" title="拦截GET方式提交的方法"></a>拦截GET方式提交的方法</h2><p>可以在@RequestMapping注解里面加上method=RequestMethod.GET。</p>
+<h2 id="获取-Request、Session"><a href="#获取-Request、Session" class="headerlink" title="获取 Request、Session"></a>获取 Request、Session</h2><p>直接在方法的形参中声明<strong>request</strong>，Spring MVC就自动把request对象传入。</p>
+<h2 id="拦截的方法里面得到入参"><a href="#拦截的方法里面得到入参" class="headerlink" title="拦截的方法里面得到入参"></a>拦截的方法里面得到入参</h2><p>直接在形参里面声明这个参数就可以,但必须<strong>名字</strong>和传过来的参数一样。</p>
+<h2 id="接收对象属性的参数"><a href="#接收对象属性的参数" class="headerlink" title="接收对象属性的参数"></a>接收对象属性的参数</h2><p>直接在方法中声明这个对象，Spring MVC就自动会把属性赋值到这个对象里面。</p>
+<h2 id="后台向前台传递数据"><a href="#后台向前台传递数据" class="headerlink" title="后台向前台传递数据"></a>后台向前台传递数据</h2><p>通过<strong>ModelMap</strong>对象,可以在这个对象里面调用put方法,把对象加到里面,前台就可以通过el表达式拿到。</p>
+<h2 id="ModelMap数据放入Session"><a href="#ModelMap数据放入Session" class="headerlink" title="ModelMap数据放入Session"></a>ModelMap数据放入Session</h2><p>可以在类上面加上@SessionAttributes注解，里面包含的字符串就是要放入session里面的key。</p>
+<h2 id="拦截器"><a href="#拦截器" class="headerlink" title="拦截器"></a>拦截器</h2><p>Spring MVC中的拦截器（Interceptor）类似于Servlet中的过滤器（Filter），它主要用于拦截用户请求并作相应的处理。例如通过拦截器可以进行权限验证、记录请求信息的日志、判断用户是否登录等。</p>
+<ul>
+<li><p>通过实现HandlerInterceptor接口；</p>
+<p>实现 preHandle（之前）、postHandle（之后）、afterCompletion（该方法会在整个请求完成，即视图渲染结束之后执行。可以通过此方法实现一些资源清理、记录日志信息等工作。）</p>
+</li>
+<li><p>通过实现WebRequestInterceptor接口。</p>
+</li>
+</ul>
+<h3 id="单个拦截器"><a href="#单个拦截器" class="headerlink" title="单个拦截器"></a>单个拦截器</h3><p><img src="https://images2017.cnblogs.com/blog/1240732/201711/1240732-20171114200159843-1367757713.png" alt="img"></p>
+<h2 id="多个拦截器"><a href="#多个拦截器" class="headerlink" title="多个拦截器"></a>多个拦截器</h2><p>preHandle()方法会按照配置文件中拦截器的配置<strong>顺序</strong>执行，postHandle()方法和afterCompletion()方法则会按照配置顺序的<strong>反序</strong>执行。</p>
+<p><img src="https://images2017.cnblogs.com/blog/1240732/201711/1240732-20171114200511874-738520900.png" alt="img"></p>
+<h2 id="WebApplicationContext"><a href="#WebApplicationContext" class="headerlink" title="WebApplicationContext"></a>WebApplicationContext</h2><p>WebApplicationContext 继承了ApplicationContext 并增加了一些WEB应用必备的特有功能，它不同于一般的ApplicationContext ，因为它能处理主题，并找到被关联的servlet。</p>
+
+      
+    </div>
+
+  </div>
+
+  <div class="article-footer">
+    <div class="article-meta pull-left">
+
+    
+      
+
+    <span class="post-categories">
+      <i class="icon-categories"></i>
+        <a href="/categories/Study/">Study</a>
+    </span>
+    
+
+    
+    
+
+    <span class="post-tags">
+      <i class="icon-tags"></i>
+        <a href="/tags/Spring/">Spring</a>
+    </span>
+    
+
+    </div>
+
+    
+  </div>
+</article>
+
+  
+	<section id="comment" class="comment">
+		<div id="gitalk-container"></div>
+	</section>
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1.7.2/dist/gitalk.css">
+	<script src="https://cdn.jsdelivr.net/npm/gitalk@1.7.2/dist/gitalk.min.js"></script>
+	<script>
+		var gitalk = new Gitalk({
+			clientID: '43df1f730957f2695673',
+			clientSecret: '29fa4bdef022da54ce3ebc4ec844d1b5c418d42a',
+			repo: 'memorykkk.github.io',
+			owner: 'memorykkk',
+			admin: ['memorykkk'],
+			id: location.pathname,
+			distractionFreeMode: false,
+			createIssueManually: true,
+			proxy: 'https://cors-anywhere.azm.workers.dev/https://github.com/login/oauth/access_token',
+		})
+
+		gitalk.render('gitalk-container')
+	</script>
+
+
+
+
+
+
+
+    </main>
+
+    <footer class="site-footer">
+  <p class="site-info" style="color='#9e9e9e'">
+    Proudly powered by <a href="https://hexo.io/" target="_blank">Hexo</a> &
+    Theme by <a href="https://github.com/CodeDaraW/Hacker" target="_blank">Hacker</a>
+    </br>
+    
+    &copy; 2020-2021 Memorykk
+    
+	<a href="http://beian.miit.gov.cn" target="_blank">陕ICP备20005895号-1</a>
+  </p>
+</footer>
+    
+    
+  </div>
+</div>
+
+</body>
+</html>

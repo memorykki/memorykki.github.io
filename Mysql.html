@@ -75,7 +75,7 @@
 
   <div class="article-top-meta">
     <span class="posted-on">
-      <a href="/Mysql-index.html" rel="bookmark">
+      <a href="/Mysql.html" rel="bookmark">
         <time class="entry-date published" datetime="2021-08-27T02:23:12.000Z">
           2021-08-27
         </time>
@@ -89,10 +89,7 @@
   <div class="article-content">
     <div class="entry">
       
-        <p>Mysql索引+事务</p>
-<span id="more"></span>
-
-<p>索引是帮助MySQL高效获取数据的排好序的数据结构，将无序的数据编程有序的查询。</p>
+        <p>索引是帮助MySQL高效获取数据的排好序的数据结构，将无序的数据编程有序的查询。</p>
 <ul>
 <li>二叉树：单链</li>
 <li>红黑树：二叉平衡树，提高一倍。旋转成本，树的高度可能会很高，效率很差</li>
@@ -100,16 +97,16 @@
 <li>B-Tree：改进红黑树，使高度尽可能小，节点横向扩展，一个存储更多的节点 。</li>
 </ul>
 <p>索引数据分布在叶子、非叶子中，索引不重复，索引从左至右递增。</p>
-<p><img src="/images/Mysql_index/image-20210825202125656.png" alt="image-20210825202125656"></p>
+<p><img src="/images/Mysql/image-20210825202125656.png" alt="image-20210825202125656"></p>
 <ul>
 <li>B+Tree：叶子节点指针连接，非叶子节点不存储数据，叶子节点包含所有索引，非叶子节点包含一部分索引，冗余索引（只需要冗余主键），数据放在叶子节点。</li>
 </ul>
 <p>双向链表便于大于、小于的索引查找</p>
-<p><img src="/images/Mysql_index/image-20210825202004251.png" alt="image-20210825202004251"></p>
+<p><img src="/images/Mysql/image-20210825202004251.png" alt="image-20210825202004251"></p>
 <p>树的高度越小越好，一个节点上存储更多索引（16KB），所以从磁盘一次加载的数据多，二分查找速度快</p>
 <p>B+树非叶子节点不存储数据，也就能放更多的索引，存储量大，B树节点有数据就不行。所以决定树的高度：非叶子节点中能放的索引数量。</p>
 <p>三层即可存储2000w+索引，在mysql启动时将上层索引加载到内存中，索引取数据只需要大约一次IO。</p>
-<p><img src="/images/Mysql_index/image-20210825203138095.png" alt="image-20210825203138095"></p>
+<p><img src="/images/Mysql/image-20210825203138095.png" alt="image-20210825203138095"></p>
 <p>.frm 表结构</p>
 <p>.MYD 表数据</p>
 <p>.MYI 表索引</p>
@@ -124,7 +121,7 @@
 <ul>
 <li>非聚集索引：索引和数据分开存储。（myisam）效率不如聚集，回表：二次索引（拿到索引再去磁盘遍历索引）</li>
 </ul>
-<p><img src="/images/Mysql_index/image-20210825204526349.png" alt="image-20210825204526349"></p>
+<p><img src="/images/Mysql/image-20210825204526349.png" alt="image-20210825204526349"></p>
 <p>必须要建主键？Mysql会使用主键构建B+树，没有主键Mysql会找一个不重复的列来构建，找不到就生成一个隐藏列rowid来构建，所以节省空间。</p>
 <p>为什么不能用UUID？UUID非整型非自增，比较大小效率慢，所以推荐整型。B+范围查找只需两次，非自增只向后插，不用分页，分裂次数少，维护B+结构成本小，推荐自增。</p>
 <p>索引就是目录，用空间换时间，B+的节点就是16KB的页，查找就是遍历页上的有序数据，一个页上有多个节点，但是页越来越长，形成链表效率会降低，所以构建目录的目录，即树。</p>
@@ -137,13 +134,13 @@
 <li>联合索引：</li>
 </ul>
 <p>多个字段，按先后顺序，谁先排好序就以谁的排序为准，后面的忽略。</p>
-<p><img src="/images/Mysql_index/image-20210825211720812.png" alt="image-20210825211720812"></p>
+<p><img src="/images/Mysql/image-20210825211720812.png" alt="image-20210825211720812"></p>
 <p>建立联合索引需要重新构建B+树，所以会和主键索引构建的B+树大量冗余数据，资源浪费，所以可以使联合索引树叶子节点不存储数据，只存储主键，然后回表，是个折中的办法。</p>
-<p><img src="/images/Mysql_index/image-20210826090232766.png" alt="image-20210826090232766"></p>
+<p><img src="/images/Mysql/image-20210826090232766.png" alt="image-20210826090232766"></p>
 <p>主键索引：</p>
-<p><img src="/images/Mysql_index/image-20210826094000399.png" alt="image-20210826094000399"></p>
+<p><img src="/images/Mysql/image-20210826094000399.png" alt="image-20210826094000399"></p>
 <p>select * from t where b&gt;1;(bcd联合索引)</p>
-<p><strong>选择索引：</strong>利用联合索引可以找到数据，但是查找的是*全部数据，叶子节点只有bcd三列数据，所以需要7次回表查出全部数据，全表扫描走主键只需要四次，更快，所以实际执行的是全表扫描，非联合索引。</p>
+<h3 id="选择索引"><a href="#选择索引" class="headerlink" title="选择索引"></a>选择索引</h3><p>利用联合索引可以找到数据，但是查找的是*全部数据，叶子节点只有bcd三列数据，所以需要7次回表查出全部数据，全表扫描走主键只需要四次，更快，所以实际执行的是全表扫描，非联合索引。</p>
 <ul>
 <li><p>如果是select b,c,d,a；那么也能走联合索引，因为想要的四个字段都在一棵树上，叶子是主键a</p>
 </li>
@@ -164,46 +161,43 @@
 <p>select ‘1’=0; false </p>
 <p>隐式的类型转换可能会导致索引失效。</p>
 <p>Mysql5.8之前仅支持升序索引，5.7支持语法层面的降序，但是索引组织仍然是升序的。</p>
-<p><strong>B树和B+树的区别</strong></p>
-<p>B树每个节点都存储key和data，所有节点组成这棵树，并且叶子节点指针为null。</p>
-<p><img src="/images/Mysql_index/20170920132504569-1630027523648.png" alt="20170920132504569"></p>
+<h3 id="B树-B-树"><a href="#B树-B-树" class="headerlink" title="B树 B+树"></a>B树 B+树</h3><p>B树每个节点都存储key和data，所有节点组成这棵树，并且叶子节点指针为null。</p>
+<p><img src="/images/Mysql/20170920132504569-1630027523648.png" alt="20170920132504569"></p>
 <p>B+树只有叶子节点存储data，叶子节点包含了这棵树的所有键值，叶子节点不存储指针。</p>
-<p><img src="/images/Mysql_index/20170920132523536.png" alt="20170920132523536"></p>
+<p><img src="/images/Mysql/20170920132523536.png" alt="20170920132523536"></p>
 <p>MySql索引数据结构对经典的B+Tree进行了优化。在原B+Tree的基础上，增加一个指向相邻叶子节点的链表指<br>针，就形成了带有顺序指针的B+Tree，提高区间访问的性能。  </p>
-<p><img src="/images/Mysql_index/image-20210827092732211.png" alt="image-20210827092732211"></p>
+<p><img src="/images/Mysql/image-20210827092732211.png" alt="image-20210827092732211"></p>
 <p>原因有很多，最主要的是这棵树矮胖，呵呵。一般来说，索引很大，往往以索引文件的形式存储的磁盘上，索引查找时产生磁盘I/O消耗，相对于内存存取，I/O存取的消耗要高几个数量级，所以评价一个数据结构作为索引的优劣最重要的指标就是在查找过程中磁盘I/O操作次数的时间复杂度。树高度越小，I/O次数越少。 </p>
 <p>那为什么是B+树而不是B树呢，因为它内节点不存储data，这样一个节点就可以存储更多的key。</p>
-<p><strong>索引类型对数据库的性能影响</strong></p>
-<p><img src="/images/Mysql_index/image-20210826161730787.png" alt="image-20210826161730787"></p>
+<h3 id="索引类型"><a href="#索引类型" class="headerlink" title="索引类型"></a><strong>索引类型</strong></h3><p><img src="/images/Mysql/image-20210826161730787.png" alt="image-20210826161730787"></p>
 <p>普通可重复，唯一不可重复，唯一可以有null，可以有多个，主键不能有null，且只能有一个。全文索引like关键字。</p>
-<p><strong>聚簇 非聚簇</strong></p>
-<p><img src="/images/Mysql_index/image-20210826163500181.png"></p>
-<p><img src="/images/Mysql_index/image-20210826163536434.png" alt="image-20210826163536434"></p>
+<h3 id="聚簇-非聚簇"><a href="#聚簇-非聚簇" class="headerlink" title="聚簇 非聚簇"></a><strong>聚簇 非聚簇</strong></h3><p><img src="/images/Mysql/image-20210826163500181.png"></p>
+<p><img src="/images/Mysql/image-20210826163536434.png" alt="image-20210826163536434"></p>
 <p>innodb仅叶子节点将索引数据放在一起。</p>
 <p>表中除了主键索引的其他索引都是辅助索引，其叶子节点存储地十主键，类非聚簇索引，但存储的不是行地址，而是主键，所以非聚簇索引都是辅助索引。</p>
-<p><strong>索引数据结构的优劣势</strong></p>
-<p><img src="/images/Mysql_index/image-20210826164046114.png" alt="image-20210826164046114"></p>
-<p><img src="/images/Mysql_index/image-20210826164125546.png" alt="image-20210826164125546"></p>
-<p><img src="/images/Mysql_index/image-20210826164153227.png" alt="image-20210826164153227"></p>
-<p><strong>索引的设计原则</strong></p>
-<p><img src="/images/Mysql_index/image-20210826164315221-1629967396390.png" alt="image-20210826164315221"></p>
+<h3 id="索引数据结构"><a href="#索引数据结构" class="headerlink" title="索引数据结构"></a><strong>索引数据结构</strong></h3><p><img src="/images/Mysql/image-20210826164046114.png" alt="image-20210826164046114"></p>
+<p><img src="/images/Mysql/image-20210826164125546.png" alt="image-20210826164125546"></p>
+<p><img src="/images/Mysql/image-20210826164153227.png" alt="image-20210826164153227"></p>
+<h3 id="索引的设计原则"><a href="#索引的设计原则" class="headerlink" title="索引的设计原则"></a><strong>索引的设计原则</strong></h3><p><img src="/images/Mysql/image-20210826164315221-1629967396390.png" alt="image-20210826164315221"></p>
 <ul>
 <li>适合索引的是where</li>
 <li>使用前缀段短索引</li>
 <li>不能在更新频繁、数据区分度小、重复度高、数据量小的列建索引</li>
 </ul>
-<p><strong>Mysql锁的类型</strong></p>
-<p><img src="/images/Mysql_index/image-20210826164836207.png" alt="image-20210826164836207"></p>
-<p><img src="/images/Mysql_index/image-20210826165201233.png" alt="image-20210826165201233"></p>
-<p><img src="/images/Mysql_index/image-20210826165417928.png" alt="image-20210826165417928"></p>
-<p><img src="/images/Mysql_index/image-20210826170133849.png" alt="image-20210826170133849"></p>
+<h3 id="锁"><a href="#锁" class="headerlink" title="锁"></a><strong>锁</strong></h3><img src="/images/Mysql/image-20210826164836207.png" alt="image-20210826164836207" style="zoom:150%;" />
+
+<img src="/images/Mysql/image-20210826165201233.png" alt="image-20210826165201233" style="zoom:150%;" />
+
+<img src="/images/Mysql/image-20210826165417928.png" alt="image-20210826165417928" style="zoom:150%;" />
+
+<img src="/images/Mysql/image-20210826170133849.png" alt="image-20210826170133849" style="zoom:150%;" />
+
 <p>1 4 5 7，间隙锁锁住234，临建锁锁住1234.</p>
 <p>行锁页锁会出现死锁。</p>
 <p>临建锁next key = 记录锁record + 间隙锁gap，三者都属于行锁。</p>
 <p>意向锁提高了加锁效率。</p>
 <p>innodb默认采用行锁，myisam默认采用表锁。</p>
-<p><strong>Mysql执行计划</strong></p>
-<ul>
+<h3 id="执行计划"><a href="#执行计划" class="headerlink" title="执行计划"></a><strong>执行计划</strong></h3><ul>
 <li><p>id：select的序号，顺序增长，越大优先级越高；</p>
 </li>
 <li><p>select_type：</p>
@@ -257,7 +251,7 @@
 <figure class="highlight sql"><table><tr><td class="code"><pre><span class="line">explain <span class="keyword">select</span> film_id <span class="keyword">from</span> film_actor <span class="keyword">where</span> film_id <span class="operator">=</span> <span class="number">1</span>;</span><br></pre></td></tr></table></figure>
 
 <ul>
-<li>Using where：使用 where 语句来处理结果，并且查询的列<strong>未被索引覆盖</strong>  </li>
+<li>Using where：使用 where 语句来处理结果，和是否读取索引无关</li>
 </ul>
 <figure class="highlight sql"><table><tr><td class="code"><pre><span class="line">explain <span class="keyword">select</span> <span class="operator">*</span> <span class="keyword">from</span> actor <span class="keyword">where</span> name <span class="operator">=</span> <span class="string">&#x27;a&#x27;</span>;</span><br></pre></td></tr></table></figure>
 
@@ -279,22 +273,17 @@
 </ul>
 <figure class="highlight sql"><table><tr><td class="code"><pre><span class="line">explain <span class="keyword">select</span> <span class="built_in">min</span>(id) <span class="keyword">from</span> film;</span><br></pre></td></tr></table></figure></li>
 </ul>
-<p><strong>事务的基本特性和隔离级别</strong></p>
-<p>原子性、一致性、隔离性、持久性。</p>
-<p><img src="/images/Mysql_index/image-20210826205502058.png" alt="image-20210826205502058"></p>
+<h3 id="事务"><a href="#事务" class="headerlink" title="事务"></a><strong>事务</strong></h3><p>原子性、一致性、隔离性、持久性。</p>
+<p><img src="/images/Mysql/image-20210826205502058.png" alt="image-20210826205502058"></p>
 <p>一致性：事务之前id唯一，不能操作之后不唯一了。</p>
-<p><img src="/images/Mysql_index/image-20210826205907242.png" alt="image-20210826205907242"></p>
+<p><img src="/images/Mysql/image-20210826205907242.png" alt="image-20210826205907242"></p>
 <p>readview只针对查询操作，如果在此期间其他事务插入了新数据，就会导致之幻读。配合间隙锁解决。</p>
-<p><img src="/images/Mysql_index/image-20210826210528829.png" alt="image-20210826210528829"></p>
-<p><strong>Mysql主从同步原理</strong></p>
-<p><img src="/images/Mysql_index/image-20210826211212487.png" alt="image-20210826211212487"></p>
-<p><img src="/images/Mysql_index/image-20210826211235973.png" alt="image-20210826211235973"></p>
-<p><img src="/images/Mysql_index/image-20210827101814389.png" alt="image-20210827101814389"></p>
-<p><strong>MyISAM和InnoDB的区别</strong></p>
-<p><img src="/images/Mysql_index/image-20210826211329868.png" alt="image-20210826211329868"></p>
-<p>MYISAM适合查询，InnoDB适合写。</p>
+<p><img src="/images/Mysql/image-20210826210528829.png" alt="image-20210826210528829"></p>
+<h3 id="主从同步"><a href="#主从同步" class="headerlink" title="主从同步"></a>主从同步</h3><p><img src="/images/Mysql/image-20210826211212487.png" alt="image-20210826211212487"></p>
+<p><img src="/images/Mysql/image-20210826211235973.png" alt="image-20210826211235973"></p>
+<p><img src="/images/Mysql/image-20210827101814389.png" alt="image-20210827101814389"></p>
 <hr>
-<p>客户端 - server（连接器 - 查询缓存 - 分析器 - 优化器 - 执行器） - 存储引擎（查询结果，返回结果集） </p>
+<h3 id="Buffer-Pool"><a href="#Buffer-Pool" class="headerlink" title="Buffer Pool"></a>Buffer Pool</h3><p>客户端 - server（连接器 - 查询缓存 - 分析器 - 优化器 - 执行器） - 存储引擎（查询结果，返回结果集） </p>
 <p>Buffer Pool 128MB：查找的结果从磁盘复制到BufferPool，先从pool查，修改先改pool，离散的页数组：</p>
 <ul>
 <li><p>free list：记录空闲的页，便于插入</p>
@@ -306,7 +295,7 @@
 </ul>
 <p>对于全表扫描，大量数据会将pool换掉。Innodb将lru分为热点区5/8，冷数据区3/8，优先淘汰冷数据区，两次访问到数据的间隔&gt;1s，表示一个正常的频率，转移冷数据-&gt;热数据，全表扫描时间隔小于1s，就不会发生冷替换热的情况。</p>
 <hr>
-<p>脏页刷新丢失：</p>
+<h3 id="redo-log"><a href="#redo-log" class="headerlink" title="redo log"></a>redo log</h3><p>脏页刷新丢失：</p>
 <p>1、修改pool产生脏页</p>
 <p>2、生成逻辑redo log（mysql内存中脏页持久化到磁盘需要，挂掉之后重新执行redo恢复） -&gt; log buffer</p>
 <p>3、redo log 持久化（当事务提交时）</p>
@@ -315,7 +304,7 @@
 <p>6、修改成功</p>
 <p>redo(log file0,log file1)file满检查点：将log file持久化到磁盘。logfile太小持久化频繁，太大恢复启动慢。</p>
 <p><strong>持久化机制：</strong>不持久化、立即持久、立即刷新到OS缓存而不立即持久化</p>
-<p><img src="/images/Mysql_index/image-20210826145638599.png" alt="image-20210826145638599"></p>
+<p><img src="/images/Mysql/image-20210826145638599.png" alt="image-20210826145638599"></p>
 <p>执行事务生成bin log</p>
 <table>
 <thead>
@@ -334,42 +323,40 @@
 </tr>
 </tbody></table>
 <p>undo log：反向日志，记录修改之前的数据，回滚使用，实现事物的隔离级别。</p>
-<p><strong>double write buffer</strong>（OS中）</p>
+<h3 id="double-write"><a href="#double-write" class="headerlink" title="double write"></a><strong>double write</strong></h3><p>（OS中）</p>
 <p>innodb数据页16KB，OS页4KB分四次写入。解决问题：如果中途挂了，就不清楚是写入了还是没写入，即没有原子性，所以出现双写缓存。</p>
 <p>innodb写入双写缓存即认为成功，并产生redo log，成功之后log失效</p>
 <p>刷新一次先写入双写缓存，再写入表空间两部完成。如果第一步挂了 ，这时候可以使用redo log恢复，如果第二部挂了，可以重新从双写缓存拿到完整的数据重新写。</p>
-<p><strong>Change Buffer</strong></p>
-<p>插入缓冲区：写操作更新数据页、索引页，数据页由日志优化，change优化索引页。</p>
+<h3 id="Change-Buffer"><a href="#Change-Buffer" class="headerlink" title="Change Buffer"></a><strong>Change Buffer</strong></h3><p>插入缓冲区：写操作更新数据页、索引页，数据页由日志优化，change优化索引页。</p>
 <p>储存在buffer pool（索引页+数据页）中，占25%。存储修改的信息（update语句），修改时数据页被更新，但索引页不更新，暂时存在change buffer中，等到下次查询走索引调用的时候将磁盘中的索引调到pool中，再和change中对应的update整合，拿到正确的索引页，即延迟更新机制，使update效率变高了。</p>
-<p><strong>可重复读</strong></p>
-<p>开启两个事务，a先读取，b修改此值，a再次读取，结果仍为之前的旧值。</p>
+<h3 id="可重复读"><a href="#可重复读" class="headerlink" title="可重复读"></a><strong>可重复读</strong></h3><p>开启两个事务，a先读取，b修改此值，a再次读取，结果仍为之前的旧值。</p>
 <p>undo实现：每个事务通过链表readview记录和它同时存在的活跃的事务，以及它们的undo log，在第二次查询时，按照记录的undolog，判断生成的事务是否在readview里，若在则执行undolog，这样就可以还原之前的值，然后输出。</p>
-<p><img src="/images/Mysql_index/image-20210826155926540.png" alt="image-20210826155926540"></p>
+<p><img src="/images/Mysql/image-20210826155926540.png" alt="image-20210826155926540"></p>
 <p>可重复读在第一次读时生成readview，后面使用同一个readview；读已提交在别的事务提交之后发生更新，判断undo链发现不在readview里，就直接取最新值。也就是说，在别的事务提交之后，查找的数据还不是最新的，而是事务启动时候的，读取已提交却可以拿到最新数据，所以可重复读相对更严。</p>
 <p>隔离级别越来越严，越难读到最新值，效率也就越低。 </p>
-<p><img src="/images/Mysql_index/image-20210826161145756.png" alt="image-20210826161145756"></p>
-<p><strong>视图</strong></p>
-<p>视图（View）是一种虚拟存在的表。视图并不在数据库中实际存在，行和列数据来自定义视图的查询中使用的表，并且是在使用视图时动态生成的。通俗的讲，视图就是一条SELECT语句执行后返回的结果集。所以我们在创建视图的时候，主要的工作就落在创建这条SQL查询语句上。<br>视图相对于普通的表的优势主要包括以下几项。</p>
+<p><img src="/images/Mysql/image-20210826161145756.png" alt="image-20210826161145756"></p>
+<h3 id="视图"><a href="#视图" class="headerlink" title="视图"></a><strong>视图</strong></h3><p>视图（View）是一种虚拟存在的表。视图并不在数据库中实际存在，行和列数据来自定义视图的查询中使用的表，并且是在使用视图时动态生成的。通俗的讲，视图就是一条SELECT语句执行后返回的结果集。所以我们在创建视图的时候，主要的工作就落在创建这条SQL查询语句上。</p>
+<p><strong>能够对数据进行修改，但是只能修改一张表中的数据。</strong></p>
+<p>视图相对于普通的表的优势主要包括以下几项。</p>
 <ul>
 <li>简单：使用视图的用户完全不需要关心后面对应的表的结构、关联条件和筛选条件，对用户来说已经是过滤好的复合条件的结果集。</li>
 <li>安全：使用视图的用户只能访问他们被允许查询的结果集，对表的权限管理并不能限制到某个行某个列，但是通过视图就可以简单的实现。</li>
 <li>数据独立：一旦视图的结构确定了，可以屏蔽表结构变化对用户的影响，源表增加列对视图没有影响；源表修改列名，则可以通过修改视图来解决，不会造成对访问者的影响。  </li>
 </ul>
-<p><strong>存储过程</strong></p>
-<p>存储过程和函数是 事先经过编译并存储在数据库中的一段 <strong>SQL 语句的集合</strong>，调用存储过程和函数可以简化应用开发人员的很多工作，减少数据在数据库和应用服务器之间的传输，对于提高数据处理的效率是有好处的。</p>
+<h3 id="存储过程"><a href="#存储过程" class="headerlink" title="存储过程"></a><strong>存储过程</strong></h3><p>存储过程和函数是 事先经过编译并存储在数据库中的一段 <strong>SQL 语句的集合</strong>，调用存储过程和函数可以简化应用开发人员的很多工作，减少数据在数据库和应用服务器之间的传输，对于提高数据处理的效率是有好处的。</p>
 <ul>
 <li><p>函数 ： 是一个有返回值的过程 ；</p>
 </li>
 <li><p>过程 ： 是一个没有返回值的函数 ；  </p>
 </li>
 </ul>
-<p><strong>触发器</strong></p>
-<p>触发器是与表有关的数据库对象，指在 insert/update/delete 之前或之后，触发并执行触发器中定义的SQL语句集合。触发器的这种特性可以协助应用在数据库端确保数据的完整性 , 日志记录 , 数据校验等操作 。  </p>
-<p><strong>MySQL体系结构</strong></p>
-<p><img src="/images/Mysql_index/image-20210827093733982.png" alt="image-20210827093733982"></p>
+<h3 id="触发器"><a href="#触发器" class="headerlink" title="触发器"></a><strong>触发器</strong></h3><p>触发器是与表有关的数据库对象，指在 insert/update/delete 之前或之后，触发并执行触发器中定义的SQL语句集合。触发器的这种特性可以协助应用在数据库端确保数据的完整性 , 日志记录 , 数据校验等操作 。  </p>
+<h3 id="体系结构"><a href="#体系结构" class="headerlink" title="体系结构"></a><strong>体系结构</strong></h3><p><img src="/images/Mysql/image-20210827093733982.png" alt="image-20210827093733982"></p>
 <p>整个MySQL Server由以下组成<br>Connection Pool : 连接池组件<br>Management Services &amp; Utilities : 管理服务和工具组件<br>SQL Interface : SQL接口组件<br>Parser : 查询分析器组件<br>Optimizer : 优化器组件<br>Caches &amp; Buffers : 缓冲池组件<br>Pluggable Storage Engines : 存储引擎<br>File System : 文件系统  </p>
 <p>连接层、服务层、引擎层、存储层。</p>
 <p>MySQL提供了插件式的存储引擎架构，存储引擎是基于表的，而不是基于库的。</p>
+<h3 id="MyISAM-InnoDB"><a href="#MyISAM-InnoDB" class="headerlink" title="MyISAM InnoDB"></a><strong>MyISAM InnoDB</strong></h3><p><img src="/images/Mysql/image-20210826211329868.png" alt="image-20210826211329868"></p>
+<p>MYISAM适合查询，InnoDB适合写。</p>
 <table>
 <thead>
 <tr>
@@ -521,8 +508,7 @@
 <li>InnoDB : 是Mysql的默认存储引擎，用于事务处理应用程序，支持外键。如果应用对事务的完整性有比较高的要求，在并发条件下要求数据的一致性，数据操作除了插入和查询意外，还包含很多的更新、删除操作，那么InnoDB存储引擎是比较合适的选择。InnoDB存储引擎除了有效的降低由于删除和更新导致的锁定， 还可以确保事务的完整提交和回滚，对于类似于计费系统或者财务系统等对数据准确性要求比较高的系统，InnoDB是最合适的选择。</li>
 <li>MyISAM ： 如果应用是以读操作和插入操作为主，只有很少的更新和删除操作，并且对事务的完整性、并发性要求不是很高，那么选择这个存储引擎是非常合适的。</li>
 </ul>
-<p><strong>避免索引失效</strong></p>
-<p>1).  全值匹配 ，对索引中所有列都指定具体值。</p>
+<h3 id="避免索引失效"><a href="#避免索引失效" class="headerlink" title="避免索引失效"></a><strong>避免索引失效</strong></h3><p>1).  全值匹配 ，对索引中所有列都指定具体值。</p>
 <p>改情况下，索引生效，执行效率高。</p>
 <figure class="highlight sql"><table><tr><td class="code"><pre><span class="line">explain <span class="keyword">select</span> <span class="operator">*</span> <span class="keyword">from</span> tb_seller <span class="keyword">where</span> name<span class="operator">=</span><span class="string">&#x27;小米科技&#x27;</span> <span class="keyword">and</span> status<span class="operator">=</span><span class="string">&#x27;1&#x27;</span> <span class="keyword">and</span> address<span class="operator">=</span><span class="string">&#x27;北京市&#x27;</span>\G;</span><br></pre></td></tr></table></figure>
 
@@ -532,11 +518,11 @@
 <p>违法最左前缀法则 ， 索引失效：</p>
 <p>如果符合最左法则，但是出现跳跃某一列，只有最左列索引生效： </p>
 <p>3). 范围查询右边的列，不能使用索引 。 </p>
-<p><img src="/images/Mysql_index/image-20210827095442175.png" alt="image-20210827095442175"></p>
+<p><img src="/images/Mysql/image-20210827095442175.png" alt="image-20210827095442175"></p>
 <p>根据前面的两个字段name ， status 查询是走索引的， 但是最后一个条件address 没有用到索引。</p>
 <p>4). 不要在索引列上进行运算操作， 索引将失效。 </p>
 <p>5). 字符串不加单引号，造成索引失效。 </p>
-<p><img src="/images/Mysql_index/image-20210827095508302.png" alt="image-20210827095508302"></p>
+<p><img src="/images/Mysql/image-20210827095508302.png" alt="image-20210827095508302"></p>
 <p>由于，在查询是，没有对字符串加单引号，MySQL的查询优化器，会自动的进行类型转换，造成索引失效。</p>
 <p>6). 尽量使用覆盖索引，避免select *</p>
 <p>尽量使用覆盖索引（只访问索引的查询（索引列完全包含查询列）），减少select * 。 </p>
@@ -545,7 +531,7 @@
 <p>示例，name字段是索引列 ， 而createtime不是索引列，中间是or进行连接是不走索引的 ： </p>
 <figure class="highlight sql"><table><tr><td class="code"><pre><span class="line">explain <span class="keyword">select</span> <span class="operator">*</span> <span class="keyword">from</span> tb_seller <span class="keyword">where</span> name<span class="operator">=</span><span class="string">&#x27;黑马程序员&#x27;</span> <span class="keyword">or</span> createtime <span class="operator">=</span> <span class="string">&#x27;2088-01-01 12:00:00&#x27;</span>\G;	</span><br></pre></td></tr></table></figure>
 
-<p><img src="/images/Mysql_index/image-20210827095641389.png" alt="image-20210827095641389"></p>
+<p><img src="/images/Mysql/image-20210827095641389.png" alt="image-20210827095641389"></p>
 <p>8).  以%开头的Like模糊查询，索引失效。</p>
 <p>解决：不使用select *，使用覆盖索引select</p>
 <p>9). 如果MySQL评估使用索引比全表更慢，则不使用索引。</p>
@@ -553,8 +539,7 @@
 <p>11). in 走索引， not in 索引失效。</p>
 <p>12). 单列索引和复合索引。</p>
 <p>尽量使用复合索引，而少使用单列索引 。</p>
-<p><strong>SQL优化</strong></p>
-<ul>
+<h3 id="SQL优化"><a href="#SQL优化" class="headerlink" title="SQL优化"></a><strong>SQL优化</strong></h3><ul>
 <li><p>大量插入</p>
 <ul>
 <li>按照主键插入</li>
@@ -577,10 +562,10 @@
 <p>一般分页查询时，通过创建覆盖索引能够比较好地提高性能。一个常见又非常头疼的问题就是 limit 2000000,10  ，此时需要MySQL排序前2000010 记录，仅仅返回2000000 - 2000010 的记录，其他记录丢弃，查询排序的代价非常大 。</p>
 <ul>
 <li><p>先查主键，在根据主键查全部记录</p>
-<p><img src="/images/Mysql_index/image-20210827100841455.png" alt="image-20210827100841455"></p>
+<p><img src="/images/Mysql/image-20210827100841455.png" alt="image-20210827100841455"></p>
 </li>
 <li><p>适用于主键自增的表，可以把Limit 查询转换成某个位置的查询 。  </p>
-<p><img src="/images/Mysql_index/image-20210827100919667.png" alt="image-20210827100919667"></p>
+<p><img src="/images/Mysql/image-20210827100919667.png" alt="image-20210827100919667"></p>
 </li>
 </ul>
 </li>
@@ -592,6 +577,162 @@
 </ul>
 </li>
 </ul>
+<h3 id="MVCC"><a href="#MVCC" class="headerlink" title="MVCC"></a>MVCC</h3><p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/xuwc/p/13873611.html">https://www.cnblogs.com/xuwc/p/13873611.html</a></p>
+<h4 id="什么是MVCC"><a href="#什么是MVCC" class="headerlink" title="什么是MVCC"></a>什么是MVCC</h4><blockquote>
+<p>MVCC<br><code>MVCC</code>，全称<code>Multi-Version Concurrency Control</code>，即多版本并发控制。MVCC是一种并发控制的方法，一般在数据库管理系统中，实现对数据库的并发访问，在编程语言中实现事务内存。</p>
+<p>多版本控制: 指的是一种提高并发的技术。最早的数据库系统，只有读读之间可以并发，读写，写读，写写都要阻塞。引入多版本之后，<strong>只有写写之间相互阻塞，其他三种操作都可以并行</strong>，这样大幅度提高了InnoDB的并发度。在内部实现中，与Postgres在数据行上实现多版本不同，InnoDB是在undolog中实现的，通过undolog可以找回数据的历史版本。找回的数据历史版本可以提供给用户读(按照隔离级别的定义，有些读请求只能看到比较老的数据版本)，也可以在回滚的时候覆盖数据页上的数据。在InnoDB内部中，会记录一个全局的活跃读写事务数组，其主要用来判断事务的可见性。<br>MVCC是一种多版本并发控制机制。</p>
+</blockquote>
+<p>MVCC在MySQL InnoDB中的实现主要是为了提高数据库并发性能，用更好的方式去处理读-写冲突，做到即使有读写冲突时，也能做到不加锁，非阻塞并发读</p>
+<hr>
+<h4 id="当前读-快照读"><a href="#当前读-快照读" class="headerlink" title="当前读 快照读"></a>当前读 快照读</h4><p>在学习MVCC多版本并发控制之前，我们必须先了解一下，什么是MySQL InnoDB下的<code>当前读</code>和<code>快照读</code>?</p>
+<ul>
+<li>当前读<br>像select lock in share mode(<code>共享锁</code>), select for update ; update, insert ,delete(<code>排他锁</code>)这些操作都是一种当前读，为什么叫当前读？就是它读取的是记录的最新版本，读取时还要保证其他并发事务不能修改当前记录，会对读取的记录进行加锁</li>
+<li>快照读<br>像<code>不加锁</code>的select操作就是快照读，即不加锁的非阻塞读；快照读的前提是隔离级别不是串行级别，串行级别下的快照读会退化成当前读；之所以出现快照读的情况，是基于提高并发性能的考虑，快照读的实现是基于多版本并发控制，即MVCC,可以认为MVCC是行锁的一个变种，但它在很多情况下，避免了加锁操作，降低了开销；既然是基于多版本，即快照读可能读到的并不一定是数据的最新版本，而有可能是之前的历史版本</li>
+</ul>
+<p>说白了MVCC就是为了实现读-写冲突不加锁，而这个读指的就是<code>快照读</code>, 而非当前读，当前读实际上是一种加锁的操作，是悲观锁的实现</p>
+<hr>
+<h4 id="当前读-快照读-MVCC的关系"><a href="#当前读-快照读-MVCC的关系" class="headerlink" title="当前读 快照读 MVCC的关系"></a>当前读 快照读 MVCC的关系</h4><ul>
+<li>准确的说，MVCC多版本并发控制指的是 “维持一个数据的多个版本，使得读写操作没有冲突” 这么一个概念。仅仅是一个理想概念</li>
+<li>而在MySQL中，实现这么一个MVCC理想概念，我们就需要MySQL提供具体的功能去实现它，而快照读就是MySQL为我们实现MVCC理想模型的其中一个具体非阻塞读功能。而相对而言，当前读就是悲观锁的具体功能实现</li>
+<li>要说的再细致一些，快照读本身也是一个抽象概念，再深入研究。MVCC模型在MySQL中的具体实现则是由 <code>3个隐式字段</code>，<code>undo日志</code> ，<code>Read View</code> 等去完成的，具体可以看下面的MVCC实现原理</li>
+</ul>
+<hr>
+<h4 id="MVCC能解决什么问题"><a href="#MVCC能解决什么问题" class="headerlink" title="MVCC能解决什么问题"></a>MVCC能解决什么问题</h4><p>数据库并发场景有三种，分别为：</p>
+<ul>
+<li><code>读-读</code>：不存在任何问题，也不需要并发控制</li>
+<li><code>读-写</code>：有线程安全问题，可能会造成事务隔离性问题，可能遇到脏读，幻读，不可重复读</li>
+<li><code>写-写</code>：有线程安全问题，可能会存在更新丢失问题，比如第一类更新丢失，第二类更新丢失</li>
+</ul>
+<p>备注：第1类丢失更新：事务A撤销时，把已经提交的事务B的更新数据覆盖了；第2类丢失更新：事务A覆盖事务B已经提交的数据，造成事务B所做的操作丢失</p>
+<p>MVCC带来的好处是？<br>多版本并发控制（MVCC）是一种用来解决<code>读-写冲突</code>的无锁并发控制，也就是为事务分配单向增长的时间戳，为每个修改保存一个版本，版本与事务时间戳关联，读操作只读该事务开始前的数据库的快照。 所以MVCC可以为数据库解决以下问题</p>
+<ul>
+<li>在并发读写数据库时，可以做到在读操作时不用阻塞写操作，写操作也不用阻塞读操作，提高了数据库并发读写的性能</li>
+<li>同时还可以解决脏读，幻读，不可重复读等事务隔离问题，但不能解决更新丢失问题</li>
+</ul>
+<p>小结一下咯<br>总之，MVCC就是因为大牛们，不满意只让数据库采用悲观锁这样性能不佳的形式去解决读-写冲突问题，而提出的解决方案，所以在数据库中，因为有了MVCC，所以我们可以形成两个组合：</p>
+<ul>
+<li><code>MVCC + 悲观锁</code><br>MVCC解决读写冲突，悲观锁解决写写冲突</li>
+<li><code>MVCC + 乐观锁</code><br>MVCC解决读写冲突，乐观锁解决写写冲突</li>
+</ul>
+<p>这种组合的方式就可以最大程度的提高数据库并发性能，并解决读写冲突，和写写冲突导致的问题</p>
+<h3 id="MVCC的实现原理"><a href="#MVCC的实现原理" class="headerlink" title="MVCC的实现原理"></a>MVCC的实现原理</h3><hr>
+<p>MVCC的目的就是多版本并发控制，在数据库中的实现，就是为了解决<code>读写冲突</code>，它的实现原理主要是依赖记录中的 <code>3个隐式字段</code>，<code>undo日志</code> ，<code>Read View</code> 来实现的。所以我们先来看看这个三个point的概念</p>
+<h4 id="隐式字段"><a href="#隐式字段" class="headerlink" title="隐式字段"></a>隐式字段</h4><p>每行记录除了我们自定义的字段外，还有数据库隐式定义的<code>DB_TRX_ID</code>,<code>DB_ROLL_PTR</code>,<code>DB_ROW_ID</code>等字段</p>
+<ul>
+<li><code>DB_TRX_ID</code><br>6byte，最近修改(<code>修改/插入</code>)事务ID：记录创建这条记录/最后一次修改该记录的事务ID</li>
+<li><code>DB_ROLL_PTR</code><br>7byte，回滚指针，指向这条记录的上一个版本（存储于rollback segment里）</li>
+<li><code>DB_ROW_ID</code><br>6byte，隐含的自增ID（隐藏主键），如果数据表没有主键，InnoDB会自动以<code>DB_ROW_ID</code>产生一个聚簇索引</li>
+<li>实际还有一个删除flag隐藏字段, 既记录被更新或删除并不代表真的删除，而是删除flag变了</li>
+</ul>
+<p><img src="https://img-blog.csdnimg.cn/20190313213705258.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L1NuYWlsTWFubg==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"><br>如上图，<code>DB_ROW_ID</code>是数据库默认为该行记录生成的唯一隐式主键，<code>DB_TRX_ID</code>是当前操作该记录的事务ID,而<code>DB_ROLL_PTR</code>是一个回滚指针，用于配合undo日志，指向上一个旧版本</p>
+<hr>
+<h4 id="undo-log"><a href="#undo-log" class="headerlink" title="undo log"></a>undo log</h4><p>undo log主要分为两种：</p>
+<ul>
+<li>insert undo log<br>代表事务在<code>insert</code>新记录时产生的<code>undo log</code>, 只在事务回滚时需要，并且在事务提交后可以被立即丢弃</li>
+<li>update undo log<br>事务在进行<code>update</code>或<code>delete</code>时产生的<code>undo log</code>; 不仅在事务回滚时需要，在快照读时也需要；所以不能随便删除，只有在快速读或事务回滚不涉及该日志时，对应的日志才会被<code>purge</code>线程统一清除</li>
+</ul>
+<blockquote>
+<p>purge</p>
+<ul>
+<li>从前面的分析可以看出，为了实现InnoDB的MVCC机制，更新或者删除操作都只是设置一下老记录的deleted_bit，并不真正将过时的记录删除。</li>
+<li>为了节省磁盘空间，InnoDB有专门的purge线程来清理deleted_bit为true的记录。为了不影响MVCC的正常工作，purge线程自己也维护了一个read view（这个read view相当于系统中最老活跃事务的read view）;如果某个记录的deleted_bit为true，并且DB_TRX_ID相对于purge线程的read view可见，那么这条记录一定是可以被安全清除的。</li>
+</ul>
+</blockquote>
+<p>对MVCC有帮助的实质是<code>update undo log</code> ，<code>undo log</code>实际上就是存在<code>rollback segment</code>中旧记录链，它的执行流程如下：</p>
+<p>一、 比如一个有个事务插入persion表插入了一条新记录，记录如下，<code>name</code>为Jerry, <code>age</code>为24岁，<code>隐式主键</code>是1，<code>事务ID</code>和<code>回滚指针</code>，我们假设为NULL</p>
+<p><img src="https://img-blog.csdnimg.cn/20190313213836406.png" alt="img"></p>
+<p>二、 现在来了一个<code>事务1</code>对该记录的<code>name</code>做出了修改，改为Tom</p>
+<ul>
+<li>在<code>事务1</code>修改该行(记录)数据时，数据库会先对该行加<code>排他锁</code></li>
+<li>然后把该行数据拷贝到<code>undo log</code>中，作为旧记录，既在<code>undo log</code>中有当前行的拷贝副本</li>
+<li>拷贝完毕后，修改该行<code>name</code>为Tom，并且修改隐藏字段的事务ID为当前<code>事务1</code>的ID, 我们默认从<code>1</code>开始，之后递增，回滚指针指向拷贝到<code>undo log</code>的副本记录，既表示我的上一个版本就是它</li>
+<li>事务提交后，释放锁</li>
+</ul>
+<p><img src="https://img-blog.csdnimg.cn/20190313220441831.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L1NuYWlsTWFubg==,size_16,color_FFFFFF,t_70" alt="img"></p>
+<p>三、 又来了个<code>事务2</code>修改<code>person表</code>的同一个记录，将<code>age</code>修改为30岁</p>
+<ul>
+<li>在<code>事务2</code>修改该行数据时，数据库也先为该行加锁</li>
+<li>然后把该行数据拷贝到<code>undo log</code>中，作为旧记录，发现该行记录已经有<code>undo log</code>了，那么最新的旧数据作为链表的表头，插在该行记录的<code>undo log</code>最前面</li>
+<li>修改该行<code>age</code>为30岁，并且修改隐藏字段的事务ID为当前<code>事务2</code>的ID, 那就是<code>2</code>，回滚指针指向刚刚拷贝到<code>undo log</code>的副本记录</li>
+<li>事务提交，释放锁</li>
+</ul>
+<p><img src="https://img-blog.csdnimg.cn/20190313220528630.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L1NuYWlsTWFubg==,size_16,color_FFFFFF,t_70" alt="img"></p>
+<p>从上面，我们就可以看出，不同事务或者相同事务的对同一记录的修改，会导致该记录的<code>undo log</code>成为一条记录版本线性表，既链表，<code>undo log</code>的链首就是最新的旧记录，链尾就是最早的旧记录（当然就像之前说的该undo log的节点可能是会purge线程清除掉，向图中的第一条insert undo log，其实在事务提交之后可能就被删除丢失了，不过这里为了演示，所以还放在这里）</p>
+<hr>
+<h4 id="Read-View"><a href="#Read-View" class="headerlink" title="Read View"></a>Read View</h4><p>什么是Read View?</p>
+<p>什么是Read View，说白了Read View就是事务进行<code>快照读</code>操作的时候生产的<code>读视图</code>(Read View)，在该事务执行的快照读的那一刻，会生成数据库系统当前的一个快照，记录并维护系统当前活跃事务的ID(当每个事务开启时，都会被分配一个ID, 这个ID是递增的，所以最新的事务，ID值越大)</p>
+<p>所以我们知道 <code>Read View</code>主要是用来做可见性判断的, 即当我们某个事务执行快照读的时候，对该记录创建一个<code>Read View</code>读视图，把它比作条件用来判断当前事务能够看到哪个版本的数据，既可能是当前最新的数据，也有可能是该行记录的<code>undo log</code>里面的某个版本的数据。</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">Read View&#96;遵循一个可见性算法，主要是将&#96;要被修改的数据&#96;的最新记录中的&#96;DB_TRX_ID&#96;（即当前事务ID）取出来，与系统当前其他活跃事务的ID去对比（由Read View维护），如果&#96;DB_TRX_ID&#96;跟Read View的属性做了某些比较，不符合可见性，那就通过&#96;DB_ROLL_PTR&#96;回滚指针去取出&#96;Undo Log&#96;中的&#96;DB_TRX_ID&#96;再比较，即遍历链表的&#96;DB_TRX_ID&#96;（从链首到链尾，即从最近的一次修改查起），直到找到满足特定条件的&#96;DB_TRX_ID&#96;, 那么这个DB_TRX_ID所在的旧记录就是当前事务能看见的最新&#96;老版本</span><br></pre></td></tr></table></figure>
+
+<p>那么这个判断条件是什么呢？即<code>changes_visible</code>方法（不完全哈，但能看出大致逻辑），该方法展示了我们拿DB_TRX_ID去跟Read View某些属性进行怎么样的比较</p>
+<p>在展示之前，我先简化一下Read View，我们可以把Read View简单的理解成有三个全局属性</p>
+<blockquote>
+<ul>
+<li><code>trx_list</code>（名字我随便取的）<br>一个数值列表，用来维护Read View生成时刻系统正活跃的事务ID</li>
+<li><code>up_limit_id</code><br>记录trx_list列表中事务ID最小的ID</li>
+<li><code>low_limit_id</code><br>ReadView生成时刻系统尚未分配的下一个事务ID，也就是<code>目前已出现过的事务ID的最大值+1</code></li>
+</ul>
+</blockquote>
+<ul>
+<li>首先比较<code>DB_TRX_ID &lt; up_limit_id</code>, 如果小于，则当前事务能看到<code>DB_TRX_ID</code> 所在的记录，如果大于等于进入下一个判断</li>
+<li>接下来判断 <code>DB_TRX_ID 大于等于 low_limit_id</code> , 如果大于等于则代表<code>DB_TRX_ID</code> 所在的记录在<code>Read View</code>生成后才出现的，那对当前事务肯定不可见，如果小于则进入下一个判断</li>
+<li>判断<code>DB_TRX_ID</code> 是否在活跃事务之中，<code>trx_list.contains(DB_TRX_ID)</code>，如果在，则代表我<code>Read View</code>生成时刻，你这个事务还在活跃，还没有Commit，你修改的数据，我当前事务也是看不见的；如果不在，则说明，你这个事务在<code>Read View</code>生成之前就已经Commit了，你修改的结果，我当前事务是能看见的</li>
+</ul>
+<hr>
+<h4 id="整体流程"><a href="#整体流程" class="headerlink" title="整体流程"></a>整体流程</h4><p>我们在了解了<code>隐式字段</code>，<code>undo log</code>， 以及<code>Read View</code>的概念之后，就可以来看看MVCC实现的整体流程是怎么样了</p>
+<p>整体的流程是怎么样的呢？我们可以模拟一下</p>
+<ul>
+<li>当<code>事务2</code>对某行数据执行了<code>快照读</code>，数据库为该行数据生成一个<code>Read View</code>读视图，假设当前事务ID为<code>2</code>，此时还有<code>事务1</code>和<code>事务3</code>在活跃中，<code>事务4</code>在<code>事务2</code>快照读前一刻提交更新了，所以Read View记录了系统当前活跃事务1，3的ID，维护在一个列表上，假设我们称为<code>trx_list</code></li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>事务1</th>
+<th>事务2</th>
+<th>事务3</th>
+<th>事务4</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>事务开始</td>
+<td>事务开始</td>
+<td>事务开始</td>
+<td>事务开始</td>
+</tr>
+<tr>
+<td>…</td>
+<td>…</td>
+<td>…</td>
+<td>修改且已提交</td>
+</tr>
+<tr>
+<td>进行中</td>
+<td>快照读</td>
+<td>进行中</td>
+<td></td>
+</tr>
+<tr>
+<td>…</td>
+<td>…</td>
+<td>…</td>
+<td></td>
+</tr>
+</tbody></table>
+<p>Read View不仅仅会通过一个列表<code>trx_list</code>来维护<code>事务2</code>执行<code>快照读</code>那刻系统正活跃的事务ID，还会有两个属性<code>up_limit_id</code>（记录trx_list列表中事务ID最小的ID），<code>low_limit_id</code>(记录trx_list列表中事务ID最大的ID，也有人说快照读那刻系统尚未分配的下一个事务ID也就是<code>目前已出现过的事务ID的最大值+1</code>，我更倾向于后者 <a target="_blank" rel="noopener" href="https://www.zhihu.com/question/66320138/answer/241418502">&gt;&gt;&gt;资料传送门 | 呵呵一笑百媚生的回答</a>) ；所以在这里例子中<code>up_limit_id</code>就是1，<code>low_limit_id</code>就是4 + 1 = 5，trx_list集合的值是1,3，<code>Read View</code>如下图</p>
+<p><img src="https://img-blog.csdnimg.cn/20190313224045780.png" alt="img"></p>
+<p>我们的例子中，只有<code>事务4</code>修改过该行记录，并在<code>事务2</code>执行<code>快照读</code>前，就提交了事务，所以当前该行当前数据的<code>undo log</code>如下图所示；我们的事务2在快照读该行记录的时候，就会拿该行记录的<code>DB_TRX_ID</code>去跟<code>up_limit_id</code>,<code>low_limit_id</code>和<code>活跃事务ID列表(trx_list)</code>进行比较，判断当前<code>事务2</code>能看到该记录的版本是哪个。</p>
+<p><img src="https://img-blog.csdnimg.cn/2019031322511052.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L1NuYWlsTWFubg==,size_16,color_FFFFFF,t_70" alt="img"></p>
+<p>所以先拿该记录<code>DB_TRX_ID</code>字段记录的事务ID <code>4</code>去跟<code>Read View</code>的的<code>up_limit_id</code>比较，看<code>4</code>是否小于<code>up_limit_id</code>(1)，所以不符合条件，继续判断 <code>4</code> 是否大于等于 <code>low_limit_id</code>(5)，也不符合条件，最后判断<code>4</code>是否处于<code>trx_list</code>中的活跃事务, 最后发现事务ID为<code>4</code>的事务不在当前活跃事务列表中, 符合可见性条件，所以<code>事务4</code>修改后提交的最新结果对<code>事务2</code>快照读时是可见的，所以<code>事务2</code>能读到的最新数据记录是<code>事务4</code>所提交的版本，而事务4提交的版本也是全局角度上最新的版本</p>
+<p><img src="https://img-blog.csdnimg.cn/20190911224215559.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L0RJTElHRU5UMjAz,size_16,color_FFFFFF,t_70" alt="# 此处有图片 4"></p>
+<p><img src="https://img-blog.csdnimg.cn/20190314141320189.jpg?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L1NuYWlsTWFubg==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
+<p>也正是Read View生成时机的不同，从而造成RC,RR级别下快照读的结果的不同</p>
+<h4 id="RC-RR"><a href="#RC-RR" class="headerlink" title="RC RR"></a>RC RR</h4><p>正是<code>Read View</code>生成时机的不同，从而造成RC,RR级别下<strong>快照读</strong>的结果的不同</p>
+<ul>
+<li>在RR级别下的某个事务的对某条记录的第一次快照读会创建一个快照及Read View, 将当前系统活跃的其他事务记录起来，此后在调用快照读的时候，还是使用的是同一个Read View，所以只要当前事务在其他事务提交更新之前使用过快照读，那么之后的快照读使用的都是同一个Read View，所以对之后的修改不可见；</li>
+<li>即RR级别下，快照读生成Read View时，Read View会记录此时所有其他活动事务的快照，这些事务的修改对于当前事务都是不可见的。而早于Read View创建的事务所做的修改均是可见</li>
+<li>而在RC级别下的，事务中，每次快照读都会新生成一个快照和Read View, 这就是我们在RC级别下的事务中可以看到别的事务提交的更新的原因</li>
+</ul>
+<p><strong>总之在RC隔离级别下，是每个快照读都会生成并获取最新的Read View；而在RR隔离级别下，则是同一个事务中的第一个快照读才会创建Read View, 之后的快照读获取的都是同一个Read View。</strong></p>
 
       
     </div>

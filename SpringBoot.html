@@ -1,0 +1,341 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>SpringBoot | Memorykk | never too late to learn</title>
+
+  
+  <meta name="author" content="Memorykk">
+  
+
+  
+  <meta name="description" content="computer,program,developer,java,linux">
+  
+
+  
+  <meta name="keywords" content="computer,study,log,tool,fragment,program,developer,java,linux">
+  
+
+  <meta id="viewport" name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+
+  <meta property="og:title" content="SpringBoot"/>
+
+  <meta property="og:site_name" content="Memorykk"/>
+
+  
+  <meta property="og:image" content="/images/favicon.ico"/>
+  
+
+  <link href="/images/favicon.ico" rel="icon">
+  <link rel="alternate" href="/atom.xml" title="Memorykk" type="application/atom+xml">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+  <meta name="baidu-site-verification" content="code-DBwLDCJwuQ" />
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+
+<body>
+<div class="blog">
+  <div class="content">
+
+    <header>
+  <div class="site-branding">
+    <h1 class="site-title">
+      <a href="/">Memorykk</a>
+    </h1>
+    <p class="site-description">never too late to learn</p>
+  </div>
+  <nav class="site-navigation">
+    <ul>
+      
+        <li><a href="/">主页</a></li>
+      
+        <li><a href="/categories">分类</a></li>
+      
+        <li><a href="/archives">归档</a></li>
+      
+        <li><a href="/about">关于</a></li>
+      
+        <li><a href="/atom.xml">订阅</a></li>
+      
+    </ul>
+  </nav>
+</header>
+
+    <main  class="site-main posts-loop">
+    <article>
+
+  
+    
+    <h3 class="article-title"><span>SpringBoot</span></h3>
+    
+  
+
+  <div class="article-top-meta">
+    <span class="posted-on">
+      <a href="/SpringBoot.html" rel="bookmark">
+        <time class="entry-date published" datetime="2021-08-12T02:49:13.000Z">
+          2021-08-12
+        </time>
+      </a>
+    </span>
+  </div>
+
+
+  
+
+  <div class="article-content">
+    <div class="entry">
+      
+        <span id="more"></span>
+<h2 id="SpringBoot"><a href="#SpringBoot" class="headerlink" title="SpringBoot"></a>SpringBoot</h2><p>创建独立Spring应用</p>
+<p>内嵌web服务器</p>
+<p>自动starter依赖，简化构建配置</p>
+<p>自动配置Spring以及第三方功能</p>
+<p>提供生产级别的监控、健康检查及外部化配置</p>
+<p>无代码生成、无需编写XML</p>
+<p>避免大量的 Maven 导入和各种版本冲突。</p>
+<h2 id="SpringBootApplication"><a href="#SpringBootApplication" class="headerlink" title="@SpringBootApplication"></a>@SpringBootApplication</h2><p>@SpringBootApplication == @SpringBootConfiguration + @EnableAutoConfiguration + @ComponentScan</p>
+<p>主程序所在包及其下面的所有子包里面的组件都会被默认扫描进来</p>
+<h2 id="Configuration"><a href="#Configuration" class="headerlink" title="@Configuration"></a>@Configuration</h2><p>配置类本身也是组件</p>
+<ul>
+<li>Full模式：配置类组件之间<strong>有依赖</strong>关系，方法会被调用得到之前单实例组件，用Full模式；proxyBeanMethods = true</li>
+<li>Lite模式：配置类组件之间<strong>无依赖</strong>关系用Lite模式加速容器启动过程，减少判断；proxyBeanMethods = false</li>
+</ul>
+<p>@Bean、@Component、@Controller、@Service、@Repository、@ComponentScan、@Import</p>
+<p>@Import：自动以类的NoArgsConstrutor创建实例放入IoC</p>
+<p>@Conditional</p>
+<p>@ConditionalOnMissingBean(name = “tom”)：满足指定条件则进行组件注入。</p>
+<p>@ImportResource：引入原生的配置文件，比如beans.xml。</p>
+<h2 id="配置绑定"><a href="#配置绑定" class="headerlink" title="配置绑定"></a>配置绑定</h2><p>两种方式：</p>
+<ul>
+<li>@Component @ConfigurationProperties(prefix = “mycar”)声明在要绑定的类的上方</li>
+<li>@EnableConfigurationProperties(Car.class)，开启对应类的配置绑定功能，把Car这个组件自动注入到容器中；</li>
+</ul>
+<p>如果@ConfigurationProperties是在第三方包中，那么@component是不能注入到容器的。只有@EnableConfigurationProperties才可以注入到容器。</p>
+<p>@ConfigurationProperties(prefix = “mycar”)：配置绑定。读取到properties文件中的内容，并且把它封装到JavaBean中。</p>
+<h2 id="自动配置原理"><a href="#自动配置原理" class="headerlink" title="自动配置原理"></a>自动配置原理</h2><p>@SpringBootApplication == @SpringBootConfiguration + @EnableAutoConfiguration + @ComponentScan</p>
+<h3 id="SpringBootConfiguration"><a href="#SpringBootConfiguration" class="headerlink" title="@SpringBootConfiguration"></a>@SpringBootConfiguration</h3><p>相当于@Configuration， 两者之间的唯一区别是@SpringBootConfiguration允许自动找到配置。</p>
+<h3 id="EnableAutoConfiguration"><a href="#EnableAutoConfiguration" class="headerlink" title="@EnableAutoConfiguration"></a>@EnableAutoConfiguration</h3><p>@EnableAutoConfiguration == @AutoConfigurationPackage + @Import(AutoConfigurationImportSelector.class)</p>
+<p><strong>@AutoConfigurationPackage</strong></p>
+<p>使用@import将AutoConfigurationPackages包下的Registrar类作为组件导入到容器中，然后使用Registrar中的方法批量完成组件的注册。</p>
+<p><strong>@Import(AutoConfigurationImportSelector.class)</strong></p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="number">1</span>、利用getAutoConfigurationEntry(annotationMetadata);给容器中批量导入一些组件 </span><br><span class="line"><span class="number">2</span>、调用List&lt;String&gt; configurations = getCandidateConfigurations(annotationMetadata, attributes)获取到所有需要导入到容器中的配置类 </span><br><span class="line"><span class="number">3</span>、利用工厂加载 Map&lt;String, List&lt;String&gt;&gt; loadSpringFactories(<span class="meta">@Nullable</span> ClassLoader classLoader)；得到所有的组件 </span><br><span class="line"><span class="number">4</span>、**从META-INF/spring.factories位置来加载一个文件。** 默认扫描我们当前系统里面所有META-INF/spring.factories位置的文件 </span><br><span class="line">文件里面写死了spring-boot一启动就要给容器中加载的<span class="number">127</span>个配置类</span><br></pre></td></tr></table></figure>
+
+
+
+<p>虽然我们127个场景的所有自动配置启动的时候默认全部加载。xxxxAutoConfiguration 按照条件装配规则（@Conditional），最终会<strong>按需配置</strong>。</p>
+<p>SpringBoot默认会在底层配好所有的组件。但是如果用户自己配置了<strong>以用户的优先</strong>，<strong>约定大于配置</strong>。</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="meta">@ConditionalOnMissingBean</span>，如果没有存在这个bean，那么springboot就会自动帮你配置</span><br></pre></td></tr></table></figure>
+
+<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p>SpringBoot先加载所有的自动配置类  xxxxxAutoConfiguration</p>
+<ul>
+<li><p>每个自动配置类按照条件进行生效，默认都会绑定配置文件指定的值。xxxxProperties里面拿。xxxProperties和配置文件进行了绑定</p>
+</li>
+<li><p>生效的配置类就会给容器中装配很多组件</p>
+</li>
+<li><p>只要容器中有这些组件，相当于这些功能就有了</p>
+</li>
+<li><p>定制化配置</p>
+<ul>
+<li><p>用户直接自己@Bean替换底层的组件</p>
+</li>
+<li><p>用户去看这个组件是获取的配置文件什么值就去修改。</p>
+<p>xxxxxAutoConfiguration —&gt; 组件  —&gt; xxxxProperties里面拿值  —-&gt; application.properties</p>
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="静态资源配置原理"><a href="#静态资源配置原理" class="headerlink" title="静态资源配置原理"></a><strong>静态资源配置原理</strong></h2><p>SpringBoot启动默认加载  xxxAutoConfiguration 类（自动配置类）<br>SpringMVC功能的自动配置类 WebMvcAutoConfiguration，生效。</p>
+<p>请求 -&gt; Controller -&gt; 静态资源处理器 -&gt; 404</p>
+<p>配置文件的相关属性和xxx进行了绑定。WebMvcProperties - spring.mvc、ResourceProperties - spring.resources</p>
+<h2 id="REST"><a href="#REST" class="headerlink" title="REST"></a>REST</h2><ul>
+<li><p>表单提交会带上_method=PUT</p>
+</li>
+<li><p>请求过来被HiddenHttpMethodFilter拦截</p>
+<ul>
+<li><p>请求是否正常，并且是POST</p>
+<ul>
+<li><p>获取到_method的值。</p>
+</li>
+<li><p>兼容以下请求；PUT.DELETE.PATCH</p>
+</li>
+<li><p>原生request（post），包装模式requesWrapper重写了getMethod方法，返回的是传入的值。</p>
+</li>
+<li><p>过滤器链放行的时候用wrapper。以后的方法调用getMethod是调用requesWrapper的。</p>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="请求映射原理"><a href="#请求映射原理" class="headerlink" title="请求映射原理"></a>请求映射原理</h2><p>1、处理http，重写servlet、doGet、doPost，实际调用doService</p>
+<p>2、所有的请求映射都在HandlerMapping中。RequestMappingHandlerMapping：保存了所有@RequestMapping 和handler的映射规则。</p>
+<p>3、请求进来，挨个尝试所有的HandlerMapping看是否有请求信息。</p>
+<ul>
+<li>如果有就找到这个请求对应的handler</li>
+<li>如果没有就是下一个 HandlerMapping</li>
+</ul>
+<h2 id="请求参数注解"><a href="#请求参数注解" class="headerlink" title="请求参数注解"></a>请求参数注解</h2><p>@PathVariable、@RequestHeader、@ModelAttribute、@RequestParam、@MatrixVariable、@CookieValue、@RequestBody</p>
+<h2 id="参数处理原理"><a href="#参数处理原理" class="headerlink" title="参数处理原理"></a>参数处理原理</h2><p>HandlerMapping中找到能处理请求的Handler<br>为当前Handler 找一个适配器 HandlerAdapter<br>适配器执行目标方法并确定方法参数的每一个值</p>
+<p><strong>参数解析器-HandlerMethodArgumentResolver</strong></p>
+<p>SpringMVC目标方法能写多少种参数类型。取决于26个参数解析器。</p>
+<p>●当前解析器是否支持解析这种参数<br>●支持就调用 resolveArgument</p>
+<p><strong>返回值处理器</strong></p>
+<p>15个遍历</p>
+<p><strong>handlerMapping中找到适合的handler(1/4) -&gt; 为Handler找一个HandlerAdapter -&gt; 参数处理（参数解析器）-&gt; 执行目标方法 -&gt; 返回值处理器 -&gt; 处理派发结果（将所有的数据都放在 ModelAndViewContainer；包含要去的页面地址View。还包含Model数据）</strong></p>
+<h2 id="POJO封装参数"><a href="#POJO封装参数" class="headerlink" title="POJO封装参数"></a>POJO封装参数</h2><p>1、判断参数是不是简单参数</p>
+<p>2、创建空的实体类</p>
+<p>3、绑定数据</p>
+<p>4、类型转换器 -&gt; javaBean</p>
+<h2 id="响应JSON"><a href="#响应JSON" class="headerlink" title="响应JSON"></a>响应JSON</h2><ul>
+<li>返回值处理器判断是否支持这种类型返回值 supportsReturnType</li>
+<li>返回值处理器调用 handleReturnValue 进行处理</li>
+<li>RequestResponseBodyMethodProcessor 可以处理返回值标了@ResponseBody 注解的。<ul>
+<li>利用 MessageConverters 进行处理 将数据写为json<ul>
+<li>1、内容协商（浏览器默认会以请求头的方式告诉服务器他能<strong>接受什么样的内容类型</strong>）（Accept字段）</li>
+<li>2、服务器最终根据自己自身的能力，决定服务器能<strong>生产出什么样内容类型</strong>的数据，</li>
+<li>3、SpringMVC会挨个遍历所有容器底层的 HttpMessageConverter ，看谁能处理？<ul>
+<li>1、得到Mapping<strong>Jackson</strong>2HttpMessageConverter可以将对象写为json</li>
+<li>2、利用MappingJackson2HttpMessageConverter将对象转为json再写出去。</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="内容协商"><a href="#内容协商" class="headerlink" title="内容协商"></a>内容协商</h2><p>根据客户端接收能力不同，返回不同媒体类型的数据。</p>
+<ul>
+<li><p>1、判断当前响应头中是否已经有确定的媒体类型。MediaType</p>
+</li>
+<li><p>2、获取客户端（PostMan、浏览器）支持接收的内容类型。（获取客户端Accept请求头字段）【application/xml】</p>
+</li>
+</ul>
+<p><strong>○</strong>contentNegotiationManager 内容协商管理器 默认使用基于请求头的策略</p>
+<ul>
+<li><p>3、遍历循环所有当前系统的 MessageConverter，看谁支持操作这个对象（Person）</p>
+</li>
+<li><p>4、找到支持操作Person的converter，把converter支持的媒体类型统计出来。</p>
+</li>
+<li><p>5、客户端需要【application/xml】。服务端能力【10种、json、xml】</p>
+</li>
+<li><p>6、进行内容协商的最佳匹配媒体类型</p>
+</li>
+<li><p>7、用 支持 将对象转为 最佳匹配媒体类型 的converter。调用它进行转化 。</p>
+</li>
+</ul>
+<h2 id="视图解析"><a href="#视图解析" class="headerlink" title="视图解析"></a>视图解析</h2><p>1、目标方法处理的过程中，所有数据都会被放在 ModelAndViewContainer 里面。包括数据和视图地址<br>2、方法的参数是一个自定义类型对象（从请求参数中确定的），把他重新放在 ModelAndViewContainer<br>3、任何目标方法执行完成以后都会返回 ModelAndView（数据和视图地址）。<br>4、processDispatchResult  处理派发结果（页面改如何响应）</p>
+<ul>
+<li>1、render(mv, request, response); 进行页面渲染逻辑<br>○1、根据方法的String返回值得到 View 对象【定义了页面的渲染逻辑】<ul>
+<li>1、所有的视图解析器尝试是否能根据当前返回值得到View对象</li>
+<li>2、得到了  redirect:/main.html –&gt; Thymeleaf new RedirectView()</li>
+<li>3、ContentNegotiationViewResolver 里面包含了下面所有的视图解析器，内部还是利用下面所有视图解析器得到视图对象。</li>
+<li>4、view.render(mv.getModelInternal(), request, response);   视图对象调用自定义的render进行页面渲染工作</li>
+<li>RedirectView 如何渲染【重定向到一个页面】</li>
+<li>1、获取目标url地址</li>
+<li>2、response.sendRedirect(encodedURL);</li>
+</ul>
+</li>
+</ul>
+<h2 id="拦截器"><a href="#拦截器" class="headerlink" title="拦截器"></a>拦截器</h2><p>implements HandlerInterceptor，重写preHandle、postHandle、afterCompletion。</p>
+<p>1、根据当前请求，找到HandlerExecutionChain【可以处理请求的handler以及handler的所有 拦截器】<br>2、先来顺序执行 所有拦截器的 preHandle方法</p>
+<ul>
+<li>1、如果当前拦截器prehandler返回为true。则执行下一个拦截器的preHandle</li>
+<li>2、如果当前拦截器返回为false。直接倒序执行所有已经执行了的拦截器的  afterCompletion；</li>
+</ul>
+<p>3、如果任何一个拦截器返回false。直接跳出不执行目标方法<br>4、所有拦截器都返回True。执行目标方法<br>5、倒序执行所有拦截器的postHandle方法<br>6、前面的步骤有任何异常都会直接倒序触发 afterCompletion<br>7、页面成功渲染完成以后，也会倒序触发 afterCompletion</p>
+<img src="https://cdn.nlark.com/yuque/0/2020/png/1354552/1605765121071-64cfc649-4892-49a3-ac08-88b52fb4286f.png?x-oss-process=image%2Fwatermark%2Ctype_d3F5LW1pY3JvaGVp%2Csize_35%2Ctext_YXRndWlndS5jb20g5bCa56GF6LC3%2Ccolor_FFFFFF%2Cshadow_50%2Ct_80%2Cg_se%2Cx_10%2Cy_10" alt="image.png" style="zoom:67%;" />
+
+<h2 id="Spring-Security-和-Shiro"><a href="#Spring-Security-和-Shiro" class="headerlink" title="Spring Security 和 Shiro"></a>Spring Security 和 Shiro</h2><p>由于 Spring Boot 官方提供了大量的非常方便的开箱即用的 Starter ，包括 Spring Security 的 Starter ，使得在 Spring Boot 中使用 Spring Security 变得更加容易，甚至只需要添加一个依赖就可以保护所有的接口，所以，如果是 Spring Boot 项目，一般选择 Spring Security 。当然这只是一个建议的组合，单纯从技术上来说，无论怎么组合，都是没有问题的。Shiro 和 Spring Security 相比，主要有如下一些特点：</p>
+<p>Spring Security 是一个重量级的安全管理框架；Shiro 则是一个轻量级的安全管理框架<br>Spring Security 概念复杂，配置繁琐；Shiro 概念简单、配置简单<br>Spring Security 功能强大；Shiro 功能简单</p>
+<h2 id="跨域问题"><a href="#跨域问题" class="headerlink" title="跨域问题"></a>跨域问题</h2><p>跨域可以在前端通过 JSONP 来解决，但是 JSONP 只可以发送 GET 请求，无法发送其他类型的请求，在 RESTful 风格的应用中，就显得非常鸡肋，因此我们推荐在后端通过 （CORS，Cross-origin resource sharing） 来解决跨域问题。</p>
+<p>在传统的 SSM 框架中，就可以通过 CORS 来解决跨域问题，只不过之前我们是在 XML 文件中配置 CORS ，现在可以通过实现WebMvcConfigurer接口然后重写addCorsMappings方法解决跨域问题。</p>
+<h2 id="starter"><a href="#starter" class="headerlink" title="starter"></a>starter</h2><p>首先它提供了一个自动化配置类，一般命名为 XXXAutoConfiguration ，在这个配置类中通过条件注解来决定一个配置是否生效（条件注解就是 Spring 中原本就有的），然后它还会提供一系列的默认配置，也允许开发者根据实际情况自定义相关配置，然后通过类型安全的属性注入将这些配置属性注入进来，新注入的属性会代替掉默认属性。正因为如此，很多第三方框架，我们只需要引入依赖就可以直接使用了。当然，开发者也可以自定义 Starter</p>
+<h2 id="spring-boot-starter-parent"><a href="#spring-boot-starter-parent" class="headerlink" title="spring-boot-starter-parent"></a>spring-boot-starter-parent</h2><p>我们都知道，新创建一个 Spring Boot 项目，默认都是有 parent 的，这个 parent 就是 spring-boot-starter-parent ，spring-boot-starter-parent 主要有如下作用：</p>
+<p>定义了 Java 编译版本为 1.8 。<br>使用 UTF-8 格式编码。<br>继承自 spring-boot-dependencies，这个里边定义了依赖的版本，也正是因为继承了这个依赖，所以我们在写依赖时才不需要写版本号。<br>执行打包操作的配置。<br>自动化的资源过滤。<br>自动化的插件配置。<br>针对 application.properties 和 application.yml 的资源过滤，包括通过 profile 定义的不同环境的配置文件，例如 application-dev.properties 和 application-dev.yml。</p>
+<h2 id="Spring-Boot-打成的-jar-和普通的-ja"><a href="#Spring-Boot-打成的-jar-和普通的-ja" class="headerlink" title="Spring Boot 打成的 jar 和普通的 ja"></a>Spring Boot 打成的 jar 和普通的 ja</h2><p>Spring Boot 项目最终打包成的 jar 是可执行 jar ，这种 jar 可以直接通过 java -jar xxx.jar 命令来运行，这种 jar 不可以作为普通的 jar 被其他项目依赖，即使依赖了也无法使用其中的类。</p>
+<p>Spring Boot 的 jar 无法被其他项目依赖，主要还是他和普通 jar 的结构不同。普通的 jar 包，解压后直接就是包名，包里就是我们的代码，而 Spring Boot 打包成的可执行 jar 解压后，在 \BOOT-INF\classes 目录下才是我们的代码，因此无法被直接引用。如果非要引用，可以在 pom.xml 文件中增加配置，将 Spring Boot 项目打包成两个 jar ，一个可执行，一个可引用。</p>
+
+      
+    </div>
+
+  </div>
+
+  <div class="article-footer">
+    <div class="article-meta pull-left">
+
+    
+      
+
+    <span class="post-categories">
+      <i class="icon-categories"></i>
+        <a href="/categories/Study/">Study</a>
+    </span>
+    
+
+    
+    
+
+    <span class="post-tags">
+      <i class="icon-tags"></i>
+        <a href="/tags/Spring/">Spring</a>
+    </span>
+    
+
+    </div>
+
+    
+  </div>
+</article>
+
+  
+	<section id="comment" class="comment">
+		<div id="gitalk-container"></div>
+	</section>
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1.7.2/dist/gitalk.css">
+	<script src="https://cdn.jsdelivr.net/npm/gitalk@1.7.2/dist/gitalk.min.js"></script>
+	<script>
+		var gitalk = new Gitalk({
+			clientID: '43df1f730957f2695673',
+			clientSecret: '29fa4bdef022da54ce3ebc4ec844d1b5c418d42a',
+			repo: 'memorykkk.github.io',
+			owner: 'memorykkk',
+			admin: ['memorykkk'],
+			id: location.pathname,
+			distractionFreeMode: false,
+			createIssueManually: true,
+			proxy: 'https://cors-anywhere.azm.workers.dev/https://github.com/login/oauth/access_token',
+		})
+
+		gitalk.render('gitalk-container')
+	</script>
+
+
+
+
+
+
+
+    </main>
+
+    <footer class="site-footer">
+  <p class="site-info" style="color='#9e9e9e'">
+    Proudly powered by <a href="https://hexo.io/" target="_blank">Hexo</a> &
+    Theme by <a href="https://github.com/CodeDaraW/Hacker" target="_blank">Hacker</a>
+    </br>
+    
+    &copy; 2020-2021 Memorykk
+    
+	<a href="http://beian.miit.gov.cn" target="_blank">陕ICP备20005895号-1</a>
+  </p>
+</footer>
+    
+    
+  </div>
+</div>
+
+</body>
+</html>
